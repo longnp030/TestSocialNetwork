@@ -1,9 +1,14 @@
+from os import name
 from django.conf.urls.static import static
-from django.contrib.auth.views import LoginView, LogoutView
+from django.urls import path
 
 from .views import *
 from tomo import settings
 
 urlpatterns = [
-    
+    path('<int:post_id>/', post_view, name='post_view'),
+    path('<int:post_id>/like/', like_post, name='like'),
+    path('<int:post_id>/unlike/', unlike_post, name='unlike'),
+    path('<int:post_id>/delete/', delete, name='delete'),
+    path('<int:post_id>/edit/', edit, name='edit'),
 ] + static('images', document_root=settings.POST_IMAGE_DIR)

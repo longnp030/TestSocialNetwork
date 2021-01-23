@@ -49,6 +49,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
     # Receive message from WebSocket
+    # This is what received when user click enter to send message on page
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         print(text_data_json)
@@ -65,20 +66,27 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await database_sync_to_async(message_obj.save)()
 
         # Send message to room group
+        # These are what will be sent to the chat_message function below
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 'type': 'chat_message',
-                'message': message
+                'message': message,
+                'sender': message_obj.sender.username,
+                'receiver': message_obj.receiver.username,
             }
         )
 
     # Receive message from room group
     async def chat_message(self, event):
         message = event['message']
-        print(message)
+        sender = event['sender']
+        receiver = event['receiver']
 
         # Send message to WebSocket
+        # These are what HTML file will receive
         await self.send(text_data=json.dumps({
-            'message': message
+            'message': message,
+            'sender': sender,
+            'receiver': receiver,
         }))

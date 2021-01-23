@@ -8,7 +8,8 @@ class PostCreationForm(forms.ModelForm):
         widget=forms.TextInput,
     )
     images = forms.ModelChoiceField(
-        queryset=PostImage.objects.all()
+        queryset=PostImage.objects.all(),
+        required=False,
     )
 
     class Meta:

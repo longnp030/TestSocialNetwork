@@ -1,3 +1,4 @@
+import chat
 import json
 from django.db.models.query_utils import Q
 from chat.models import ChatBox, Message
