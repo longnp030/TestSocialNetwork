@@ -8,17 +8,16 @@
     <input id="chat-message-submit" type="button" value="Send">
 
     {{ user_id|json_script:"user-id" }}
+    {{ request.user.id|json_script:"current-user-id" }}
 
     <script>
         var sent_data = JSON.parse("{{data|escapejs}}");
         
-        var sender_id = sent_data['me_id'];
-        var sender_id_str = sender_id.toString();
-        var sender_name = sent_data['me_name'];
-        var sender_avatar = sent_data['me_avatar'];
+        var me_id = sent_data['me_id'];
+        var me_name = sent_data['me_name'];
+        var me_avatar = sent_data['me_avatar'];
 
         var receiver_id = sent_data['receiver_id'];
-        var receiver_id_str = receiver_id.toString();
         var receiver_name = sent_data['receiver_name'];
         var receiver_avatar = sent_data['receiver_avatar'];
 
@@ -27,12 +26,13 @@
         messages = JSON.parse(messages);
         for (let i = 0; i < messages.length; i++) {
             console.log(messages[i]);
-            if (messages[i]['message_sender_name'] === sender_name) {
+            if (messages[i]['message_sender_name'] === me_name) {
                 message_holder.value += (' '.repeat(100) + messages[i]['message_sender_name'] + ': ' + messages[i]['message_content'] + '\n');
             } else {
                 message_holder.value += (messages[i]['message_sender_name'] + ': ' + messages[i]['message_content'] + '\n');
             }
         }
+        message_holder.scrollTop = message_holder.scrollHeight;
 
         var chat_header = document.getElementById("receiver-name");
         chat_header.innerText = receiver_name;
@@ -50,7 +50,12 @@
 
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
-            document.querySelector('#chat-log').value += (' '.repeat(100) + sender_name + ': ' + data.message + '\n');
+            if (me_name === data.sender) {
+                message_holder.value += (' '.repeat(100) + data.sender + ': ' + data.message + '\n');
+            } else {
+                message_holder.value += (data.sender + ': ' + data.message + '\n')
+            }
+            message_holder.scrollTop = message_holder.scrollHeight;
         };
 
         chatSocket.onclose = function(e) {

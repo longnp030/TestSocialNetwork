@@ -1,62 +1,75 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
- 
+
 <head>
     <meta charset="UTF-8">
- 
+
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-        crossorigin="anonymous">
- 
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
-        crossorigin="anonymous">
- 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
     <!-- LOCAL CSS -->
-    <link rel="stylesheet" href=""> {% block additional_head %}{% endblock %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}"> {% block additional_head %}{% endblock %}
 </head>
- 
+
 <body style="padding-top:65px;">
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
+                <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
                 <a class="navbar-brand" href="/">F</a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav pull-right">
                     {% if request.user.is_authenticated %}
-                        <li><a href="/user/logout/">Logout</a></li>
+                    <li><a href="/user/logout/">Logout</a></li>
                     {% else %}
-                        <li><a href="/user/register/">Register</a></li>
-                        <li><a href="/user/login/">Login</a></li>
+                    <li><a href="/user/register/">Register</a></li>
+                    <li><a href="/user/login/">Login</a></li>
                     {% endif %}
                 </ul>
                 {% if request.user.is_authenticated %}
-                <p class="navbar-text pull-right">Hi, <a href="{% url 'user:user_profile' user_id=request.user.id %}">{{ request.user }}</a></p>
+                <p class="navbar-text pull-right">
+                    Hi, <a href="{% url 'user:user_profile' user_id=request.user.id %}">{{ request.user }}</a></p>
                 {% endif %}
             </div>
         </div>
     </nav>
-    <div class="container" style="margin-bottom:50px;">
-        {% if messages %} 
+    <div class="container col-lg-12">
+    {% block post_view %}
+        <div class="container col-lg-3">
+            {% block page_shortcuts %} {% endblock %}
+        </div> 
+        <div class="container col-lg-6" style="margin-bottom:10px;">
+            {% if messages %}
             {% for message in messages %}
-                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}" role="alert">
-                    {{ message }}
-                </div>
-            {% endfor %} 
-        {% endif %}
-        <!-- MAIN PAGE CONTENT -->
-        {% block main_content %}{% endblock %}
+            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}"
+                role="alert">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            <!-- MAIN PAGE CONTENT -->
+            {% block main_content %}{% endblock %}
+        </div>
+        <div class="container col-lg-3">
+            {% block contact %} {% endblock %}
+        </div>
+    {% endblock %}
     </div>
+
     <!-- PAGE LEVEL JAVASCRIPT -->
     {% block page_javascript %} {% endblock %}
- 
+
 </body>
+
 </html>

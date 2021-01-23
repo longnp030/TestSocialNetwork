@@ -6,7 +6,7 @@ from django.shortcuts import redirect, render
 
 
 def home(request):
-    me = None if request.user is None else User.objects.get(id=request.user.id)
+    me = None if request.user.id is None else User.objects.get(id=request.user.id)
 
     if request.method == 'POST':
         post_create_form = PostCreationForm(
@@ -16,6 +16,7 @@ def home(request):
             post = post_create_form.save(commit=False)
             post.author = me
             post.save()
+
             return redirect('home')
     else:
         post_create_form = PostCreationForm()
@@ -37,8 +38,9 @@ def home(request):
         'form': post_create_form,
         'posts': [{
             'post': post,
-            'reactions': None if len(Reaction.objects.filter(post=post)) == 0 else Reaction.objects.filter(post=post)[0],
+            'reactions': Reaction.objects.filter(post=post),
+            'liked': len(Reaction.objects.filter(post=post, liker=me)) > 0,
             'comments': Comment.objects.filter(post=post),
-        } for post in posts],
+        } for post in reversed(posts)],
     }
     return render(request, 'home.html', context)

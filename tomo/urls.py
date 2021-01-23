@@ -15,15 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls.conf import include
+from django.conf.urls.static import static
 from django.urls import path
-from django.conf.urls import url
 
 from .views import *
+from tomo import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('post/', include('post.urls')),
+    path('post/', include(('post.urls', 'post'), namespace='post')),
     path('user/', include(('user.urls', 'user'), namespace='user')),
     path('chat/', include(('chat.urls', 'chat'), namespace='chat')),
     path('', home, name='home'),
-]
+] + static('images', document_root=settings.POST_IMAGE_DIR)

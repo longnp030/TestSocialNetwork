@@ -54,13 +54,15 @@ class Reaction(models.Model):
     id = models.AutoField(primary_key=True, unique=True, db_column='id')
     post = models.ForeignKey(
         Post,
-        related_name='reaction', verbose_name="post's reactions",
+        related_name='reaction', verbose_name="post",
         db_column='post',
         on_delete=models.CASCADE,
     )
-    like = models.IntegerField(
-        verbose_name='like', blank=True, null=True,
-        db_column='like'
+    liker = models.ForeignKey(
+        User,
+        related_name='liker',
+        db_column='liker',
+        on_delete=models.CASCADE,
     )
     '''love = models.IntegerField(
         verbose_name='love', blank=True, null=True,
@@ -82,6 +84,9 @@ class Reaction(models.Model):
         verbose_name='angry', blank=True, null=True,
         db_column='angry'
     )'''
+    def __str__(self):
+        return self.post.author.username + '-' + self.post.text + '-' + self.liker.username
+
     class Meta:
         db_table = 'reaction'
         managed = False
@@ -111,7 +116,7 @@ class Comment(models.Model):
     modified = models.DateTimeField(auto_now=True, db_column='modified')
 
     def __str__(self):
-        return self.commentor + '-' + self.content
+        return str(self.post.id) + '-' + self.commentor.username + '-' + self.content
 
     class Meta:
         db_table = 'comment'

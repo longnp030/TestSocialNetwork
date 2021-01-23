@@ -40,7 +40,7 @@ class Message(models.Model):
 
 
 class ChatBox(models.Model):
-    id = models.AutoField(primary_key=True, unique=True, db_column='id', default=1)
+    id = models.AutoField(primary_key=True, unique=True, db_column='id')
     user1 = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -64,11 +64,11 @@ class ChatBox(models.Model):
     def save(self, *args, **kwargs):
         #self.name = self.user1.username + '-' + self.user2.username
         if not self.name:
-            self.name = str(self.pk)
+            self.name = str(self.user1.id+self.user2.id)
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.name
+        return str(self.id)
 
     class Meta:
         db_table = 'chatbox'

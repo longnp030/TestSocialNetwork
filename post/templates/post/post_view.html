@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+
+{% block post_view %}
+<div class="container col-lg-12" style="margin-bottom: 20px;">
+    <!--Post header-->
+    <div class="container post-header">
+        <div class="author-option container-fluid">
+        <!---Post author-->
+        <span class="author col-lg-4 pull-left row row-no-gutters">
+            <h5><a href="{% url 'user:user_profile' post.author.id %}">{{ post.author }}</a></h5></span>
+        
+        <!--Post options-->
+        <span class="post-option col-lg-1 pull-left dropdown" id="post-option">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+                {% if me == post.author %}
+                <li><a href="#">Edit</a></li>
+                <li><a href="{% url 'post:delete' post_id %}" onclick="return confirm('Are you sure?');">Delete</a></li>
+                {% endif %}
+                <li><a onclick="copyLink();" id="link-to-copy" title="{% url 'post:post_view' post_id %}">Copy link</a></li>
+            </ul>
+            <script>
+                function copyLink() {
+                    var link = document.getElementById("link-to-copy").title;
+                    link.focus();
+                    link.select();
+                    document.execCommand("copy", link);
+                }
+            </script>
+        </span>
+        <script>
+
+        </script>
+        </div>
+
+        <!--Post create time-->
+        <div class="post-created-at container-fluid">{{ post.created }}</div>
+    </div>
+
+    <div class="container">
+        <!--Post text content-->
+        <div class="container-fluid post-text">{% if post.text %}<h5><strong>{{ post.text }}</strong></h5>{% endif %}</div>
+
+        <div class="container-fluid post-reactions">
+        <!--Post reactions-->
+        
+            <!--Clickable to se who liked-->
+            <span id="show-liked-box" class="like-count col-lg-1 pull-left">
+                <!--Like count-->
+                <strong>{{ reactions|length }}</strong> liked
+            </span>
+            <span class="like-btn col-lg-3 pull-left">
+                <!--Check if current user liked or not-->
+                {% if liked %}
+                    <!--If yes, button to unlike-->
+                    <form action="{% url 'post:unlike' post.id %}" method="POST">
+                        {% csrf_token %}
+                        <input type="submit" id="btnunlike" value="Unlike">
+                    </form>
+                {% else %}
+                    <!--Otherwise button to like-->
+                    <form action="{% url 'post:like' post.id %}" method="POST">
+                        {% csrf_token %}
+                        <input type="submit" id="btnlike" value="Like">
+                    </form>
+                {% endif %}
+            </span>
+            
+            <!--Popup box displays who liked-->
+            <div id="liked-box" class="box container-fluid">
+                <div class="box-content">
+                    <div class="box-header row">
+                        <span class="col-lg-11"><strong>People liked this post:</strong></span>
+                        <span class="close col-lg-1 pull-right">&times;</span>
+                    </div>
+                    {% for reaction in reactions %}
+                        <div class="box-main row mt-50">
+                            <span class="col-lg-8"><a href="{% url 'user:user_profile' reaction.liker.id %}">{{ reaction.liker }}</a></span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <script>
+                var modal = document.getElementById("liked-box");
+                var btn = document.getElementById("show-liked-box");
+                var span = document.getElementsByClassName("close")[0];
+
+                btn.onclick = function () {
+                    modal.style.display = "block";
+                }
+                span.onclick = function () {
+                    modal.style.display = "none";
+                }
+                window.onclick = function (event) {
+                    if (event.target == modal) {
+                        modal.style.display = "none";
+                    }
+                }
+            </script>
+        </div>
+
+        <span id="show-comments-btn" class="col-lg-8 pull-right">Comments</span>
+        <!--Post comments-->
+        <div id="comments-box" class="container-fluid">
+            {% if comments %}
+                {% for comment in comments %}
+                    <div class="a-comment" style="margin-bottom: 10px;">
+                        <span class="comment-author col-lg-1">
+                            <a href="{% url 'user:user_profile' comment.commentor.id %}">{{ comment.commentor }}</a>
+                        </span>
+                        <span class="comment-content col-lg-11 pull-left">{{ comment.content }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            <div id="blank" class="col-lg-1"></div>
+            <textarea id="comment-input" cols="10" rows="10" class="col-lg-3" style="margin-top: 10px;"></textarea>
+            <input id="comment-submit" type="button" value="Send" class="col-lg-1 pull-left" style="margin-top: 10px;">
+            {{ post_id|json_script:"post-id" }}
+        </div>
+        <script>
+            var show_comments_btn = document.getElementById("show-comments-btn");
+            var comments_box = document.getElementById("comments-box");
+            comments_box.style.display = "none";
+            show_comments_btn.onclick = function () {
+                if (comments_box.style.display === "none") {
+                    comments_box.style.display = "block";
+                } else {
+                    comments_box.style.display = "none";
+                }
+            }
+
+            const postId = JSON.parse(document.getElementById('post-id').textContent);
+            const commentSocket = new WebSocket(
+                'ws://'
+                + window.location.host
+                + '/ws/post/'
+                + postId
+                + '/'
+            );
+            commentSocket.onmessage = function(e) {
+                const data = JSON.parse(e.data);
+                comment_author = document.createElement("span");
+                comment_author.className = "comment-author col-lg-1";
+                comment_author_a = document.createElement("a");
+                comment_author_a.href = "/user/" + data.commentor_id;
+                comment_author_a.textContent = data.commentor_name;
+                comment_author.appendChild(comment_author_a);
+                comment_content = document.createElement("span");
+                comment_content.className = "comment-content col-lg-11 pull-left";
+                comment_content.textContent = data.comment;
+                a_comment = document.createElement("div");
+                a_comment.className = "a-comment";
+                a_comment.appendChild(comment_author);
+                a_comment.appendChild(comment_content);
+                
+                comments_box.insertBefore(a_comment, document.getElementById("blank"));
+            };
+            commentSocket.onclose = function(e) {
+                console.error('Comment socket closed unexpectedly');
+            };
+
+            document.querySelector('#comment-input').focus();
+            document.querySelector('#comment-input').onkeyup = function(e) {
+                if (e.keyCode === 13) {  // enter, return
+                    document.querySelector('#comment-submit').click();
+                }
+            };
+
+            document.querySelector('#comment-submit').onclick = function(e) {
+                const commentInputDom = document.querySelector('#comment-input');
+                const comment = commentInputDom.value;
+                commentSocket.send(JSON.stringify({
+                    'comment': comment
+                }));
+                commentInputDom.value = '';
+            };
+        </script>
+    </div>
+</div>
+{% endblock %}
