@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block main_content %}
+{% if mine %}
+    <h1>My profile</h1>
+    {% if me.avatar %}
+        <img src="{{ me.avatar.url }}" width="100" height="100">
+    {% endif %}
+
+    <h3>Pending friend requests</h3>
+    {% if received_friend_requests %}
+        <ul>
+        {% for received_friend_request in received_friend_requests %}
+            <li><p>
+                <a href="{% url 'user:user_profile' received_friend_request.sender.id %}">
+                {{ received_friend_request.sender }}</a>
+
+                <p id="sendedfrreqon">From {{ received_friend_request.sended }}</p>
+
+                <form action="{% url 'user:accept_friend_request' received_friend_request.sender.id %}" method="GET" onsubmit="accepted();">
+                    {% csrf_token %}
+                    <input type="submit" id="acceptfrreqbtn" value="Accept">
+                </form>
+
+                <form action="{% url 'user:reject_friend_request' received_friend_request.sender.id %}" method="GET">
+                    {% csrf_token %}
+                    <input type="submit" id="rejectfrreqbtn" value="Reject" onclick="return confirm('Are you sure?'); rejected();">
+                </form>
+            </p></li>
+
+            <script>
+                function insertAfter(newNode, referenceNode) {
+                    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+                }
+                function accepted() {
+                    sendedfrreqon = document.getElementById('sendedfrreqon');
+                    acceptfrreqbtn = document.getElementById('acceptfrreqbtn');
+                    rejectfrreqbtn = document.getElementById('rejectfrreqbtn');
+                    acceptfrreqbtn.type = 'hidden';
+                    rejectfrreqbtn.type = 'hidden';
+                    confirmtext = document.createElement('p').appendChild(document.createTextNode('You are now friends!'));
+                    insertAfter(confirmtext, sendedfrreqon);
+                    confirmtext.hidden = true;
+                    return true;
+                };
+            </script>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <h5>You don't have any friend requests at the moment.</h5>
+    {% endif %}
+
+    <h3>Friend list</h3>
+    {% if friends %}
+        <ul>
+            {% for friend in friends %}
+                <li><p>
+                    <a href="{% url 'user:user_profile' friend.id %}">{{ friend }}</a>
+                </p></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <h5>You don't have any friends :(</h5>
+    {% endif %}
+
+    {% if form %}
+        <form method="POST" enctype='Multipart/form-data'>
+            {% csrf_token %}
+            {{ form }}
+            <div class="btn-comfirm">
+                <button type="submit"><i>Save profile</i></button>
+            </div>
+        </form>
+    {% endif %}
+{% else %}
+    <h1>{{ viewing_user }}'s profile</h1>
+    {% if viewing_user.avatar %}
+        <img src="{{ viewing_user.avatar.url }}">
+    {% endif %}
+
+    {% if is_friend %}
+        <p>You are friends</p>
+        <form action="{% url 'user:unfriend' viewing_user.id %}" method="GET">
+            {% csrf_token %}
+            <input type="submit" id="unfriend" value="Unfriend" onclick="return confirm('Are you sure?');">
+        </form>
+    {% else %}
+        {% if friend_request_sended %}
+            <form action="{% url 'user:cancel_friend_request' viewing_user.id %}" method="GET">
+                {% csrf_token %}
+                <input type="submit" id="cancelfrreqbtn" value="Cancel request">
+            </form>
+        {% else %}
+            <form action="{% url 'user:send_friend_request' viewing_user.id %}" method="GET" onsubmit="location.reload(); return true;">
+                {% csrf_token %}
+                <input type="submit" id="addfrbtn" value="Add friend">
+            </form>
+        {% endif %}
+    {% endif %}
+
+    <input id="enterchat" 
+        type="button" value="Chat with {{ viewing_user }}" 
+        onclick="window.location.pathname = '/chat/{{ viewing_user.id }}/'">
+{% endif %}
+{% endblock %}

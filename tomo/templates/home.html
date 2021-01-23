@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+<div class="row">
+    <div class="col-lg-12">
+        {% if user.is_authenticated %}
+        <h3>Create new post!</h3>
+        {% if form %}
+        <form method="POST" enctype='Multipart/form-data'>
+            {% csrf_token %}
+            {{ form }}
+            <div class="btn-comfirm">
+                <button type="submit"><i>Post</i></button>
+            </div>
+        </form>
+        {% endif %}
+        <hr>
+
+        <h3>Newsfeed</h3>
+        {% if posts %}
+        <ul>
+            {% for post in posts %}
+            <li>
+                <p>
+                <h5><a href="{% url 'user:user_profile' post.post.author.id %}">{{ post.post.author }}</a></h5>
+                {{ post.post.created }}<br>
+                {% if post.post.text %}<h5><strong>{{ post.post.text }}</strong></h5>{% endif %}
+                
+                {% if post.reactions %}
+                <h5>Reactions: <strong>{{ post.reactions.like }}</strong></h5><br>
+                {% else %}
+                <h5>No reactions</h5>
+                {% endif %}
+
+                {% if post.comments %}
+                <h5>Comments</h5>
+                <ul>
+                    {% for comment in post.comments %}
+                    <li>
+                        <p>
+                        <h6><a href="{% url 'user:user_profile' comment.commentor.id %}">{{ comment.commentor }}</a>
+                        </h6>
+                        <h6>{{ comment.content }}</h6>
+                        </p>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <h5>No comments.</h5>
+                {% endif %}
+
+                </p>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
