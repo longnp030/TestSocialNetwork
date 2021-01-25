@@ -1,0 +1,34 @@
+{% block messenger %}
+<div class="dropdown navbar-text">
+    <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">Messenger</button>
+    <ul class="dropdown-menu">                        
+        <li class="dropdown-submenu">
+            <a class="test" tabindex="-1" href="#">Personnal Chats</a>
+            <ul class="dropdown-menu">
+                {% for personnal_chat in personnal_chats %}
+                    <li><a tabindex="-1" href="{% url 'chat:room' personnal_chat.receiver_id %}">{{ personnal_chat.chat }}</a></li>
+                {% endfor %}
+            </ul>
+        </li>
+        <li class="dropdown-submenu">
+            <a class="test" tabindex="-1" href="#">Group Chats</a>
+            <ul class="dropdown-menu">
+                {% for group_chat in group_chats %}
+                    <li><a tabindex="-1" href="{% url 'chat:group_room' group_chat.id %}">{{ group_chat }}</a></li>
+                {% endfor %}
+            </ul>
+        </li>
+        <li><a tabindex="-1" id="create-group-chat" href="{% url 'chat:create_group_chat' request.user.id %}">Create new group chat</a></li>
+    </ul>
+    <script>
+        console.log("{{ personnal_chats }}")
+        $(document).ready(function(){
+          $('.dropdown-submenu a.test').on("click", function(e){
+            $(this).next('ul').toggle();
+            e.stopPropagation();
+            e.preventDefault();
+          });
+        });
+    </script>
+</div>
+{% endblock %}

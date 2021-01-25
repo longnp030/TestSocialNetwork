@@ -1,3 +1,4 @@
+from chat.models import *
 from django.db.models.query_utils import Q
 from user.models import *
 from post.models import *
@@ -21,18 +22,9 @@ def home(request):
     else:
         post_create_form = PostCreationForm()
     
-    '''my_posts = Post.objects.filter(author=me)
-    my_friendships1 = Friendship.objects.filter(user1=me)
-    my_friendships2 = Friendship.objects.filter(user2=me)
-    friends = []
-    for my_friendship in my_friendships1:
-        friends.append(User.objects.get(id=my_friendship.user2.id))
-    for my_friendship in my_friendships2:
-        friends.append(User.objects.get(id=my_friendship.user1.id))
-    friends_posts = []
-    for friend in friends:
-        friends_posts = Post.objects.filter(author=friend)
-    friends_posts = [friend_posts for friend_posts in friends_posts]'''
+    personnal_chats = ChatBox.objects.filter(Q(user1=me)|Q(user2=me))
+    group_chats = list(GroupChatBox.objects.filter(creator=me)) + [join.chatbox for join in JoinGroupChat.objects.filter(invitee=me)]
+
     posts = Post.objects.all()
     context = {
         'form': post_create_form,
@@ -42,5 +34,12 @@ def home(request):
             'liked': len(Reaction.objects.filter(post=post, liker=me)) > 0,
             'comments': Comment.objects.filter(post=post),
         } for post in reversed(posts)],
+        'me': me,
+        'personnal_chats': [{
+            'chat': chat,
+            'receiver_id': chat.user2.id if chat.user1 == me else chat.user1.id,
+        } for chat in personnal_chats],
+        'group_chats': group_chats,
+        'view': 'home',
     }
     return render(request, 'home.html', context)

@@ -1,11 +1,11 @@
-from post.models import Comment, Post
+from post.models import Comment, Post, Reaction
 import json
 import datetime as dt
 
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 
-class CommentConsumer(AsyncWebsocketConsumer):
+class PostConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.me = self.scope['user']
         print(self.me)
@@ -40,37 +40,83 @@ class CommentConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         print(text_data_json)
-        comment = text_data_json['comment']
-        print(comment)
+        try:
+            comment = text_data_json['comment']
+            print(comment)
 
-        # Save comments to database
-        comment_obj = Comment(
-            commentor=self.me,
-            post=self.post,
-            content=comment,
-            written=dt.datetime.now,
-            modified=dt.datetime.now
-        )
+            # Save comments to database
+            comment_obj = Comment(
+                commentor=self.me,
+                post=self.post,
+                content=comment,
+                written=dt.datetime.now,
+                modified=dt.datetime.now
+            )
 
-        await database_sync_to_async(comment_obj.save)()
+            await database_sync_to_async(comment_obj.save)()
 
-        # Send comment to room group
-        # These are what will be sent to the post_comment function below
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'post_comment',
-                'comment': comment,
-                'commentor_id': comment_obj.commentor.id,
-                'commentor_name': comment_obj.commentor.username,
-            }
-        )
+            # Send comment to room group
+            # These are what will be sent to the post_comment function below
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'post_comment',
+                    'comment': comment,
+                    'commentor_id': comment_obj.commentor.id,
+                    'commentor_name': comment_obj.commentor.username,
+                    'target': 'comment',
+                }
+            )
+        except Exception:
+            reaction = text_data_json['reaction']
+            if reaction == "liked":
+                reaction_obj = Reaction(post=self.post, liker=self.me)
+                await database_sync_to_async(reaction_obj.save)()
+                reaction_count = await self.get_reaction_count()
+
+                # Send comment to room group
+                # These are what will be sent to the post_comment function below
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'post_reaction',
+                        'liker_id': reaction_obj.liker.id,
+                        'liker_name': reaction_obj.liker.username,
+                        'target': 'reaction',
+                        'reaction_count': reaction_count,
+                        'reaction': reaction,
+                    }
+                )
+            else:
+                reaction_obj = await database_sync_to_async(Reaction.objects.get)(post=self.post, liker=self.me)
+                await database_sync_to_async(reaction_obj.delete)()
+                reaction_count = await self.get_reaction_count()
+                print(reaction_count)
+
+                # Send comment to room group
+                # These are what will be sent to the post_comment function below
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'post_reaction',
+                        'unliker_id': self.me.id,
+                        'unliker_name': self.me.username,
+                        'target': 'reaction',
+                        'reaction_count': reaction_count,
+                        'reaction': reaction,
+                    }
+                )
+
+    @database_sync_to_async
+    def get_reaction_count(self):
+        return Reaction.objects.filter(post=self.post).count()
     
     # Receive comment from room group
     async def post_comment(self, event):
         comment = event['comment']
         commentor_id = event['commentor_id']
         commentor_name = event['commentor_name']
+        target = event['target']
 
         # Send comment to WebSocket
         # These are what HTML file will receive
@@ -78,4 +124,38 @@ class CommentConsumer(AsyncWebsocketConsumer):
             'comment': comment,
             'commentor_id': commentor_id,
             'commentor_name': commentor_name,
+            'target': target,
         }))
+
+    # Receive comment from room group
+    async def post_reaction(self, event):
+        target = event['target']
+        reaction_count = event['reaction_count']
+        if event['reaction'] == 'liked':
+            liker_id = event['liker_id']
+            liker_name = event['liker_name']
+            reaction = event['reaction']
+
+            # Send comment to WebSocket
+            # These are what HTML file will receive
+            await self.send(text_data=json.dumps({
+                'liker_id': liker_id,
+                'liker_name': liker_name,
+                'reaction_count': reaction_count,
+                'target': target,
+                'reaction': reaction
+            }))
+        else:
+            unliker_id = event['unliker_id']
+            unliker_name = event['unliker_name']
+            reaction = event['reaction']
+
+            # Send comment to WebSocket
+            # These are what HTML file will receive
+            await self.send(text_data=json.dumps({
+                'unliker_id': unliker_id,
+                'unliker_name': unliker_name,
+                'reaction_count': reaction_count,
+                'target': target,
+                'reaction': reaction
+            }))

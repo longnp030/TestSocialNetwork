@@ -1,4 +1,3 @@
-from django.template.defaulttags import register
 from django.shortcuts import render
 from django.views.generic import CreateView
 from django.contrib.auth import authenticate, login
@@ -7,6 +6,7 @@ from django.urls import reverse
 from django.db.models import Q
 import datetime as dt
 
+from chat.views import get_available_chats as gac
 from .models import *
 from .forms import *
 
@@ -73,6 +73,8 @@ def user_profile(request, user_id):
         'friend_request_sended': friend_request_sended,
         'received_friend_requests': received_friend_requests,
         'friends': friends,
+        'personnal_chats': gac(request)['personnal_chats'],
+        'group_chats': gac(request)['group_chats'],
     }
     return render(request, 'user_profile.html', context)
 

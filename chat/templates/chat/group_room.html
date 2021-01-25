@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+
+{% block main_content %}
+    <h1><a id="group-chat-name"></a></h1>
+    <textarea id="chat-log" cols="100" rows="20"></textarea><br>
+    <input id="chat-message-input" type="text" size="100"><br>
+    <input id="chat-message-submit" type="button" value="Send">
+
+    {{ group_chat_id|json_script:"group-chat-id" }}
+    {{ request.user.id|json_script:"current-user-id" }}
+
+    <script>
+        var sent_data = JSON.parse("{{data|escapejs}}");
+        console.log(sent_data);
+        
+        var me_id = sent_data['me_id'];
+        var me_name = sent_data['me_name'];
+        var me_avatar = sent_data['me_avatar'];
+
+        var message_holder = document.getElementById("chat-log");
+        var messages = sent_data['groupmessages'];
+        messages = JSON.parse(messages);
+        for (let i = 0; i < messages.length; i++) {
+            console.log(messages[i]);
+            if (messages[i]['groupmessage_sender_name'] === me_name) {
+                message_holder.value += (' '.repeat(100) + messages[i]['groupmessage_sender_name'] + ': ' + messages[i]['groupmessage_content'] + '\n');
+            } else {
+                message_holder.value += (messages[i]['groupmessage_sender_name'] + ': ' + messages[i]['groupmessage_content'] + '\n');
+            }
+        }
+        message_holder.scrollTop = message_holder.scrollHeight;
+
+        var chat_header = document.getElementById("group-chat-name");
+        chat_header.innerText = "{{ group_chat_name }}";
+        chat_header.href = "/chat/group/" + "{{ group_chat_id }}";
+
+        const group_chat_id = JSON.parse(document.getElementById('group-chat-id').textContent);
+
+        const chatSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/chat/group/'
+            + group_chat_id
+            + '/'
+        );
+
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            if (me_name === data.sender) {
+                message_holder.value += (' '.repeat(100) + data.sender + ': ' + data.message + '\n');
+            } else {
+                message_holder.value += (data.sender + ': ' + data.message + '\n')
+            }
+            message_holder.scrollTop = message_holder.scrollHeight;
+        };
+
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+        document.querySelector('#chat-message-input').focus();
+        document.querySelector('#chat-message-input').onkeyup = function(e) {
+            if (e.keyCode === 13) {  // enter, return
+                document.querySelector('#chat-message-submit').click();
+            }
+        };
+
+        document.querySelector('#chat-message-submit').onclick = function(e) {
+            const messageInputDom = document.querySelector('#chat-message-input');
+            const message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            messageInputDom.value = '';
+        };
+    </script>
+{% endblock %}
+
+{% block chat_option %}
+    <div class="container chat-option" id="chat-option">
+        <div class="container-fluid container">
+            {% if is_creator %}
+                <a type="button" class="btn btn-primary" data-toggle="modal" id="addmember" href="#" data-target="#add-member-modal">Add people to chat</a>
+                <div class="modal fade" id="add-member-modal" tabindex="-1" role="dialog" aria-labelledby="add-member-modal-header" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="add-member-modal-header">Add member</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="POST" enctype='Multipart/form-data' id="add-member-form">
+                                {% csrf_token %}
+                                {{ form }}
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" data-target="#add-member-btn" form="add-member-form">Save changes</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+            {% endif %}
+        </div>
+        <div class="container-fluid member-view" id="members">
+            {% for member in groupchat_member %}
+                <a class="container row" href="{% url 'user:user_profile' member.id %}">{{ member }}</a>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

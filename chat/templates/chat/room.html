@@ -8,7 +8,6 @@
     <input id="chat-message-submit" type="button" value="Send">
 
     {{ user_id|json_script:"user-id" }}
-    {{ request.user.id|json_script:"current-user-id" }}
 
     <script>
         var sent_data = JSON.parse("{{data|escapejs}}");

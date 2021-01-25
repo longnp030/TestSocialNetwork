@@ -1,3 +1,13 @@
+.dropdown-submenu {
+  position: relative;
+}
+
+.dropdown-submenu .dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -1px;
+}
+
 #show-liked-box:hover, #show-liked-box:focus {
   cursor: pointer;
   text-decoration: underline;
@@ -67,22 +77,22 @@
 }
 
 /*Comment section*/
-#show-comments-btn {
+.show-comments-btn {
   cursor: pointer;
   text-decoration: underline;
 }
 
-#comments-box {
+.comments-box {
   height: fit-content;
   overflow: scroll hidden;
   overflow-x: hidden;
   width: 100%;
 }
 
-#comments-box:hover {
+.comments-box:hover {
   overflow-y: visible;
 }
 
-#comments-box .a-comment {
+.comments-box .a-comment {
   padding: 10px 0 10px 0;
 }
