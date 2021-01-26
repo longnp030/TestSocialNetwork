@@ -91,6 +91,7 @@ CHANNEL_LAYERS = {
     },
 }
 
+os.environ.setdefault('DJANGO_ALLOW_ASYNC_UNSAFE', 'True')
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases

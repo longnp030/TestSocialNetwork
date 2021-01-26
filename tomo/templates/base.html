@@ -79,27 +79,27 @@
         </div>
     </nav>
     <div class="container col-lg-12">
-    {% block post_view %}
-        <div class="container col-lg-3">
-            {% block page_shortcuts %} {% endblock %}
-        </div> 
-        <div class="container col-lg-6" style="margin-bottom:10px;">
-            {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}"
-                role="alert">
-                {{ message }}
+        {% block post_view %}
+            <div class="container col-lg-3">
+                {% block page_shortcuts %} {% endblock %}
+            </div> 
+            <div class="container col-lg-6" style="margin-bottom:10px;">
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}"
+                    role="alert">
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+                <!-- MAIN PAGE CONTENT -->
+                {% block main_content %}{% endblock %}
             </div>
-            {% endfor %}
-            {% endif %}
-            <!-- MAIN PAGE CONTENT -->
-            {% block main_content %}{% endblock %}
-        </div>
-        <div class="container col-lg-3">
-            {% block contact %} {% endblock %}
-            {% block chat_option %} {% endblock %}
-        </div>
-    {% endblock %}
+            <div class="container col-lg-3">
+                {% block contact %} {% endblock %}
+                {% block chat_option %} {% endblock %}
+            </div>
+        {% endblock %}
     </div>
 
     <!-- PAGE LEVEL JAVASCRIPT -->

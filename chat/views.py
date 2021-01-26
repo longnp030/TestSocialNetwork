@@ -81,18 +81,24 @@ def group_room(request, group_chat_id):
         me_avatar = None
 
     if request.method == 'POST':
-        form = GroupChatAddMemberForm(request.POST, initial={'inviter': me, 'groupchatbox':groupchatbox})
-        if form.is_valid():
-            form.inviter = me
-            form.groupchatbox = groupchatbox
-            form.save()
+        groupchataddmemberform = GroupChatAddMemberForm(request.POST, initial={'inviter': me, 'groupchatbox':groupchatbox})
+        if groupchataddmemberform.is_valid():
+            print('add form')
+            print(groupchataddmemberform.cleaned_data['invitee'], type(groupchataddmemberform.cleaned_data['invitee']))
+            groupchataddmemberform.save()
+            return redirect(reverse('chat:group_room', kwargs={'group_chat_id': group_chat_id}))
+        return redirect(reverse('chat:group_room', kwargs={'group_chat_id': group_chat_id}))
+    else:
+        groupchataddmemberform = GroupChatAddMemberForm(initial={'inviter': me, 'groupchatbox':groupchatbox})
+
+    if request.method == 'POST':
+        changechatnameform = ChangeChatNameForm(request.POST, instance=GroupChatBox.objects.get(id=group_chat_id))
+        if changechatnameform.is_valid():
+            changechatnameform.save()
             return redirect(reverse('chat:group_room', kwargs={'group_chat_id': group_chat_id}))
     else:
-        form = GroupChatAddMemberForm(initial={'inviter': me, 'groupchatbox':groupchatbox})
-    
-    context = {
-        'form': form,
-    }
+        changechatnameform = ChangeChatNameForm(instance=GroupChatBox.objects.get(id=group_chat_id))
+        
     contextDict = {
         'me_id': me.id,
         'me_name': me.username,
@@ -107,7 +113,8 @@ def group_room(request, group_chat_id):
         } for groupmessage in groupmessages]),
     }
     context = {
-        'form': form,
+        'groupchataddmemberform': groupchataddmemberform,
+        'changechatnameform': changechatnameform,
         'me': me,
         'groupchatbox': groupchatbox,
         'group_chat_id': group_chat_id,
@@ -138,6 +145,21 @@ def add_member(request, group_chat_id):
     }
     return render(request, 'chat/add_member.html', context)
 
+def change_chat_name(request, group_chat_id):
+    if not is_member_of_group_chat(request, group_chat_id):
+        return redirect('home')
+    if request.method == 'POST':
+        form = ChangeChatNameForm(request.POST, instance=GroupChatBox.objects.get(id=group_chat_id))
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('chat:group_room', kwargs={'group_chat_id': group_chat_id}))
+    else:
+        form = ChangeChatNameForm(instance=GroupChatBox.objects.get(id=group_chat_id))
+    context = {
+        'form': form,
+    }
+    return render(request, 'chat/change_chat_name.html', context)
+
 def get_available_chats(request):
     me = User.objects.get(id=request.user.id)
     personnal_chats = ChatBox.objects.filter(Q(user1=me)|Q(user2=me))
@@ -150,3 +172,11 @@ def get_available_chats(request):
         } for chat in personnal_chats],
         'group_chats': group_chats,
     }
+
+def kick(request, group_chat_id, member_id):
+    JoinGroupChat.objects.get(groupchatbox=GroupChatBox.objects.get(id=group_chat_id), invitee=User.objects.get(id=member_id)).delete()
+    return redirect(reverse('chat:group_room', kwargs={'group_chat_id': group_chat_id}))
+
+def leave(request, group_chat_id):
+    JoinGroupChat.objects.get(groupchatbox=GroupChatBox.objects.get(id=group_chat_id), invitee=User.objects.get(id=request.user.id)).delete()
+    return redirect(reverse('chat:group_room', kwargs={'group_chat_id': group_chat_id}))

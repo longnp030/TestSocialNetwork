@@ -23,7 +23,7 @@ def home(request):
         post_create_form = PostCreationForm()
     
     personnal_chats = ChatBox.objects.filter(Q(user1=me)|Q(user2=me))
-    group_chats = list(GroupChatBox.objects.filter(creator=me)) + [join.chatbox for join in JoinGroupChat.objects.filter(invitee=me)]
+    group_chats = list(GroupChatBox.objects.filter(creator=me)) + [join.groupchatbox for join in JoinGroupChat.objects.filter(invitee=me)]
 
     posts = Post.objects.all()
     context = {

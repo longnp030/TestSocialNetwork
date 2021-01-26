@@ -127,11 +127,40 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         print(text_data_json)
         message = text_data_json['message']
-        print(message)
+            
+        try:
+            member_id = text_data_json['member_id']
+        except:
+            member_id = None
+        if member_id:
+            member = await database_sync_to_async(User.objects.get)(id=int(member_id))
+            valid_join = await database_sync_to_async(JoinGroupChat.objects.filter)(groupchatbox=self.chatbox, invitee=member)
+            if len(valid_join) > 0:
+                print(len(valid_join))
+                return
+            else:
+                message = "added " + member.username + " to this chat."
+
+        try:
+            kick_member_id = text_data_json['kick_member_id']
+        except:
+            kick_member_id = None;
+        if kick_member_id:
+            member = await database_sync_to_async(User.objects.get)(id=int(kick_member_id))
+            message = "removed '" + member.username + "' from this chat."
+
+        try:
+            leave_member_id = text_data_json['leave_member_id']
+        except:
+            leave_member_id = None
+        if leave_member_id:
+            member = await database_sync_to_async(User.objects.get)(id=int(leave_member_id))
+            message = member.username + " leaved this chat."
 
         # Save messages to database
+        print(message)
         message_obj = GroupMessage(
-            sender=self.me,
+            sender=self.chatbox.creator,
             content=message,
             chatbox=self.chatbox,
             sent=dt.datetime.now
@@ -146,6 +175,7 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
                 'type': 'chat_message',
                 'message': message,
                 'sender': message_obj.sender.username,
+                'sent_at': str(message_obj.sent),
                 'groupchatbox': message_obj.chatbox.name,
             }
         )
@@ -154,6 +184,7 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
     async def chat_message(self, event):
         message = event['message']
         sender = event['sender']
+        sent_at = event['sent_at']
         groupchatbox = event['groupchatbox']
 
         # Send message to WebSocket
@@ -161,5 +192,6 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'message': message,
             'sender': sender,
+            'sent_at': sent_at,
             'groupchatbox': groupchatbox,
         }))

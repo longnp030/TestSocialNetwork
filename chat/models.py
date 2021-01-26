@@ -130,6 +130,7 @@ class JoinGroupChat(models.Model):
     
     class Meta:
         db_table = 'joingroupchat'
+        unique_together = ['groupchatbox', 'invitee']
         managed = False
 
 class GroupMessage(models.Model):

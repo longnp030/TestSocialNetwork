@@ -1,11 +1,11 @@
-{% extends 'base.html' %}
+{#{% extends 'base.html' %}#}
 
 
-{% block post_view %}
+{% block main_content %}
 <div class="container col-lg-12" style="margin-bottom: 20px;">
     <!--Post header-->
     <div class="container post-header">
-        <div class="author-option container-fluid">
+        <div class="author-option container row col-lg-12">
             <!---Post author-->
             <span class="author col-lg-4 pull-left row row-no-gutters">
                 <h5><a href="{% url 'user:user_profile' post.author.id %}">{{ post.author }}</a></h5>
@@ -37,7 +37,7 @@
         </div>
 
         <!--Post create time-->
-        <div class="post-created-at container-fluid">{{ post.created }}</div>
+        <div class="post-created-at container">{{ post.created }}</div>
     </div>
 
     <div class="container">
