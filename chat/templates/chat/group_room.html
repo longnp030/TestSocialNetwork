@@ -63,9 +63,9 @@
                         message_holder.scrollTop = message_holder.scrollHeight;
                     };
                     
-                    var kick_btn = document.getElementById("leave-group-chat");
-                    console.log(kick_btn);
-                    kick_btn.onclick = function(e) {
+                    var leave_chat_btn = document.getElementById("leave-group-chat");
+                    console.log(leave_chat_btn);
+                    leave_chat_btn.onclick = function(e) {
                         chatSocket.send(JSON.stringify({
                             'message': "{{ me.id }}",
                             'leave_member_id': "{{ me.id }}",
@@ -83,27 +83,17 @@
                         <div class="dropdown-menu row" aria-labelledby="chat-member-option">
                             <a type="button" class="dropdown-item row" href="{% url 'chat:kick' group_chat_id member.id %}" id="kick-{{ member.id }}">Kick out</a>
                             <a type="button" class="dropdown-item row" href="#">Comming-up</a>
-                            <script>
-                                chatSocket.onmessage = function(e) {
-                                    var data = JSON.parse(e.data);
-                                    message_holder.value += ('(' + data.sent_at + ')' + '(' + data.sender + ') ' + data.message + '\n');
-                                    message_holder.scrollTop = message_holder.scrollHeight;
-                                };
-
-                                chatSocket.onclose = function(e) {
-                                    console.error('Chat socket closed unexpectedly');
-                                };
-                                
-                                var kick_btn = document.getElementById("kick-0".replace("0", "{{ member.id }}"));
-                                console.log(kick_btn);
-                                kick_btn.onclick = function(e) {
-                                    chatSocket.send(JSON.stringify({
-                                        'message': "{{ member.id }}",
-                                        'kick_member_id': "{{ member.id }}",
-                                    }));
-                                };
-                            </script>
                         </div>
+                        <script>
+                            var kick_btn = document.getElementById("kick-0".replace("0", "{{ member.id }}"));
+                            console.log(kick_btn);
+                            kick_btn.onclick = function(e) {
+                                chatSocket.send(JSON.stringify({
+                                    'message': "{{ member.id }}",
+                                    'kick_member_id': "{{ member.id }}",
+                                }));
+                            };
+                        </script>
                     </div>
                 {% endif %}
             {% endfor %}
@@ -112,8 +102,22 @@
     <script>
         chatSocket.onmessage = function(e) {
             var data = JSON.parse(e.data);
-            message_holder.value += ('(' + data.sent_at + ')' + '(' + data.sender + ') ' + data.message + '\n');
+            if (data.kick_member_id !== null && data.kick_member_id === "{{ me.id }}") {
+                message_holder.value += ('You are kicked out from this chat :(\n');
+                message_holder.disabled = true;
+                messageInputDom.disabled = true;
+                messageSubmit.disabled = true;
+                document.getElementById("change-chat-name").disabled = true;
+                document.getElementById("leave-group-chat").disabled = true;
+            } else {
+                message_holder.value += ('(' + data.sent_at + ')' + '(' + data.sender + ') ' + data.message + '\n');
+            }
             message_holder.scrollTop = message_holder.scrollHeight;
+
+            console.log(data.new_chat_name);
+            if (data.new_chat_name !== null) {
+                document.getElementById("group-chat-name").textContent = data.new_chat_name;
+            }
         };
 
         chatSocket.onclose = function(e) {
@@ -131,6 +135,7 @@
             const name = newNameInput.value;
             chatSocket.send(JSON.stringify({
                 'message': ' changed group chat name to ' + name,
+                'new_chat_name': name,
             }));
             newNameInput.value = '';
         };
@@ -170,7 +175,7 @@
         var me_name = sent_data['me_name'];
         var me_avatar = sent_data['me_avatar'];
 
-        var message_holder = document.getElementById("chat-log");
+        const message_holder = document.getElementById("chat-log");
         var messages = sent_data['groupmessages'];
         messages = JSON.parse(messages);
         for (let i = 0; i < messages.length; i++) {
@@ -179,7 +184,7 @@
         }
         message_holder.scrollTop = message_holder.scrollHeight;
 
-        var chat_header = document.getElementById("group-chat-name");
+        const chat_header = document.getElementById("group-chat-name");
         chat_header.innerText = "{{ group_chat_name }}";
         chat_header.href = "/chat/group/" + "{{ group_chat_id }}";
 
@@ -203,14 +208,15 @@
             console.error('Chat socket closed unexpectedly');
         };
 
-        document.querySelector('#chat-message-input').focus();
-        document.querySelector('#chat-message-input').onkeyup = function(e) {
+        const messageInputDom = document.querySelector('#chat-message-input');
+        const messageSubmit = document.querySelector('#chat-message-submit');
+        messageInputDom.focus();
+        messageInputDom.onkeyup = function(e) {
             if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#chat-message-submit').click();
+                messageSubmit.click();
             }
         };
-        document.querySelector('#chat-message-submit').onclick = function(e) {
-            const messageInputDom = document.querySelector('#chat-message-input');
+        messageSubmit.onclick = function(e) {
             const message = messageInputDom.value;
             chatSocket.send(JSON.stringify({
                 'message': message

@@ -147,7 +147,7 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
             kick_member_id = None;
         if kick_member_id:
             member = await database_sync_to_async(User.objects.get)(id=int(kick_member_id))
-            message = "removed '" + member.username + "' from this chat."
+            message = "removed " + member.username + " from this chat."
 
         try:
             leave_member_id = text_data_json['leave_member_id']
@@ -157,10 +157,43 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
             member = await database_sync_to_async(User.objects.get)(id=int(leave_member_id))
             message = member.username + " leaved this chat."
 
+            print(message)
+            message_obj = GroupMessage(
+                sender=self.chatbox.creator,
+                content=message,
+                chatbox=self.chatbox,
+                sent=dt.datetime.now
+            )
+            await database_sync_to_async(message_obj.save)()
+
+            # Send message to room group
+            # These are what will be sent to the chat_message function below
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': message,
+                    'sender': message_obj.sender.username,
+                    'sent_at': str(message_obj.sent),
+                    'groupchatbox': message_obj.chatbox.name,
+                }
+            )
+            return
+
+        try:
+            new_chat_name = text_data_json['new_chat_name']
+        except:
+            new_chat_name = None
+        if new_chat_name and len(new_chat_name) > 0:
+            self.chatbox.name = new_chat_name
+            await database_sync_to_async(self.chatbox.save)()
+            print(self.chatbox.name)
+
         # Save messages to database
         print(message)
+        print(new_chat_name)
         message_obj = GroupMessage(
-            sender=self.chatbox.creator,
+            sender=self.me,
             content=message,
             chatbox=self.chatbox,
             sent=dt.datetime.now
@@ -177,6 +210,8 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
                 'sender': message_obj.sender.username,
                 'sent_at': str(message_obj.sent),
                 'groupchatbox': message_obj.chatbox.name,
+                'new_chat_name': new_chat_name,
+                'kick_member_id': kick_member_id,
             }
         )
     
@@ -186,6 +221,8 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
         sender = event['sender']
         sent_at = event['sent_at']
         groupchatbox = event['groupchatbox']
+        new_chat_name = event['new_chat_name']
+        kick_member_id = event['kick_member_id']
 
         # Send message to WebSocket
         # These are what HTML file will receive
@@ -194,4 +231,6 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
             'sender': sender,
             'sent_at': sent_at,
             'groupchatbox': groupchatbox,
+            'new_chat_name': new_chat_name,
+            'kick_member_id': kick_member_id,
         }))

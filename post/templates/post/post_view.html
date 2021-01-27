@@ -1,18 +1,18 @@
-{#{% extends 'base.html' %}#}
+{% extends 'base.html' %}
 
 
 {% block main_content %}
-<div class="container col-lg-12" style="margin-bottom: 20px;">
+<div class="container col-md-12" style="margin-bottom: 20px;">
     <!--Post header-->
     <div class="container post-header">
-        <div class="author-option container row col-lg-12">
+        <div class="author-option container row col-md-12">
             <!---Post author-->
-            <span class="author col-lg-4 pull-left row row-no-gutters">
+            <span class="author col-md-1 pull-left row row-no-gutters">
                 <h5><a href="{% url 'user:user_profile' post.author.id %}">{{ post.author }}</a></h5>
             </span>
 
             <!--Post options-->
-            <span class="post-option col-lg-1 pull-left dropdown" id="post-option">
+            <span class="post-option col-md-1 pull-left dropdown" id="post-option">
                 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
                     <span class="caret"></span></button>
                 <ul class="dropdown-menu">
@@ -37,7 +37,7 @@
         </div>
 
         <!--Post create time-->
-        <div class="post-created-at container">{{ post.created }}</div>
+        <div class="post-created-at">{{ post.created }}</div>
     </div>
 
     <div class="container">
@@ -49,11 +49,11 @@
             <!--Post reactions-->
 
             <!--Clickable to see who liked-->
-            <span id="show-liked-box-{{ post.id }}" class="like-count col-lg-1">
+            <span id="show-liked-box-{{ post.id }}" class="like-count col-md-1">
                 <!--Like count-->
                 <b class="post-like-count" id="like-count-{{ post.id }}">{{ reactions|length }}</b> liked
             </span>
-            <span class="like-btn col-lg-2" id="like-btn">
+            <span class="like-btn col-md-2" id="like-btn">
                 <!--Check if current user liked or not-->
                 <p class="liked-or-not" hidden></p>
                 {% if liked %}
@@ -80,18 +80,18 @@
                 <!--<a class="likebtn" id="like-{{ post.id }}" href="#"">Like</a>-->
                 {% endif %}
             </span>
-            <span id="show-comments-btn-{{ post.id }}" class="col-lg-9 pull-center show-comments-btn">Comments</span>
+            <span id="show-comments-btn-{{ post.id }}" class="col-md-9 pull-center show-comments-btn">Comments</span>
 
             <!--Popup box displays who liked-->
             <div id="liked-box-{{ post.id }}" class="box container-fluid">
                 <div class="box-content">
                     <div class="box-header row">
-                        <span class="col-lg-11"><strong>People liked this post:</strong></span>
-                        <span class="close col-lg-1 pull-right">&times;</span>
+                        <span class="col-md-11"><strong>People liked this post:</strong></span>
+                        <span class="close col-md-1 pull-right">&times;</span>
                     </div>
                     {% for reaction in reactions %}
                     <div class="box-main row mt-50" id="postliker-{{ post.id }}">
-                        <span class="col-lg-8"><a href="{% url 'user:user_profile' reaction.liker.id %}">{{
+                        <span class="col-md-8"><a href="{% url 'user:user_profile' reaction.liker.id %}">{{
                                 reaction.liker }}</a></span>
                     </div>
                     {% endfor %}
@@ -121,19 +121,19 @@
         <!--Post comments-->
         <div id="comments-box-{{ post.id }}" class="container-fluid comments-box">
             <div id="blank" class="container">
-                <textarea id="comment-input-{{ post.id }}" cols="10" rows="1" class="col-lg-6" style="margin-top: 10px;"
+                <textarea id="comment-input-{{ post.id }}" cols="10" rows="1" class="col-md-6" style="margin-top: 10px;"
                     required></textarea>
-                <input id="comment-submit-{{ post.id }}" type="button" value="Send" class="col-lg-1 pull-left"
+                <input id="comment-submit-{{ post.id }}" type="button" value="Send" class="col-md-1 pull-left"
                     style="margin-top: 10px;">
             </div>
             
             {% if comments %}
             {% for comment in comments %}
             <div class="a-comment row" style="margin-bottom: 10px;">
-                <span class="comment-author col-lg-1">
+                <span class="comment-author col-md-1">
                     <a href="{% url 'user:user_profile' comment.commentor.id %}">{{ comment.commentor }}</a>
                 </span>
-                <span class="comment-content col-lg-11 pull-center">{{ comment.content }}</span>
+                <span class="comment-content col-md-11 pull-center">{{ comment.content }}</span>
             </div>
             {% endfor %}
             {% endif %}

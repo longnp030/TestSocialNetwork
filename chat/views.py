@@ -53,6 +53,8 @@ def room(request, user_id):
     }
     context = {
         'user_id': user_id,
+        'personnal_chats': get_available_chats(request)['personnal_chats'],
+        'group_chats': get_available_chats(request)['group_chats'],
         'data': json.dumps(contextDict)
     }
     return render(request, 'chat/room.html', context)
@@ -68,7 +70,7 @@ def group_room(request, group_chat_id):
         id=group_chat_id
     )
     if len(groupchatbox) == 0:
-        groupchatbox = GroupChatBox.objects.create(admin=me)
+        groupchatbox = GroupChatBox.objects.create(creator=me)
     else:
         groupchatbox = groupchatbox[0]
     try:
@@ -96,6 +98,7 @@ def group_room(request, group_chat_id):
         if changechatnameform.is_valid():
             changechatnameform.save()
             return redirect(reverse('chat:group_room', kwargs={'group_chat_id': group_chat_id}))
+        return redirect(reverse('chat:group_room', kwargs={'group_chat_id': group_chat_id}))
     else:
         changechatnameform = ChangeChatNameForm(instance=GroupChatBox.objects.get(id=group_chat_id))
         
@@ -113,6 +116,8 @@ def group_room(request, group_chat_id):
         } for groupmessage in groupmessages]),
     }
     context = {
+        'personnal_chats': get_available_chats(request)['personnal_chats'],
+        'group_chats': get_available_chats(request)['group_chats'],
         'groupchataddmemberform': groupchataddmemberform,
         'changechatnameform': changechatnameform,
         'me': me,
@@ -163,7 +168,7 @@ def change_chat_name(request, group_chat_id):
 def get_available_chats(request):
     me = User.objects.get(id=request.user.id)
     personnal_chats = ChatBox.objects.filter(Q(user1=me)|Q(user2=me))
-    group_chats = list(GroupChatBox.objects.filter(creator=me)) + [join.chatbox for join in JoinGroupChat.objects.filter(invitee=me)]
+    group_chats = list(GroupChatBox.objects.filter(creator=me)) + [join.groupchatbox for join in JoinGroupChat.objects.filter(invitee=me)]
 
     return {
         'personnal_chats': [{

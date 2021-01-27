@@ -34,7 +34,7 @@ class ChatBox(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return str(self.id)
+        return str(self.user1.username + '-' + self.user2.username)
 
     class Meta:
         db_table = 'chatbox'
@@ -95,7 +95,7 @@ class GroupChatBox(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return str(self.id)
+        return str(self.name)
 
     class Meta:
         db_table = 'groupchatbox'
