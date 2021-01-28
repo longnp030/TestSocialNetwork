@@ -3,15 +3,21 @@ from django import forms
 from .models import *
 
 class PostCreationForm(forms.ModelForm):
-    text = forms.CharField(
-        max_length=1000, required=False,
-        widget=forms.TextInput,
-    )
-    images = forms.ModelChoiceField(
-        queryset=PostImage.objects.all(),
-        required=False,
-    )
-
     class Meta:
         model = Post
-        fields = ['text', 'images', ]
+        fields = ['text', ]
+
+class ImageUploadForm(forms.ModelForm):
+    image = forms.ImageField(
+        max_length=100, required=True,
+        widget=forms.FileInput
+    )
+    
+    class Meta:
+        model = Image
+        fields = ['image', ]
+    
+class PostAddImageForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['images', ]

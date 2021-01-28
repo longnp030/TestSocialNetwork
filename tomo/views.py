@@ -3,31 +3,17 @@ from django.db.models.query_utils import Q
 from user.models import *
 from post.models import *
 from post.forms import *
-from django.shortcuts import redirect, render
-
+from django.shortcuts import render
+from chat.views import get_available_chats as gac
 
 def home(request):
     me = None if request.user.id is None else User.objects.get(id=request.user.id)
-
-    if request.method == 'POST':
-        post_create_form = PostCreationForm(
-            request.POST, request.FILES,
-        )
-        if post_create_form.is_valid():
-            post = post_create_form.save(commit=False)
-            post.author = me
-            post.save()
-
-            return redirect('home')
-    else:
-        post_create_form = PostCreationForm()
     
     personnal_chats = ChatBox.objects.filter(Q(user1=me)|Q(user2=me))
     group_chats = list(GroupChatBox.objects.filter(creator=me)) + [join.groupchatbox for join in JoinGroupChat.objects.filter(invitee=me)]
 
     posts = Post.objects.all()
     context = {
-        'form': post_create_form,
         'posts': [{
             'post': post,
             'reactions': Reaction.objects.filter(post=post),

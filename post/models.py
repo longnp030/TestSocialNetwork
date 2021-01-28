@@ -8,13 +8,20 @@ def image_upload_location(instance, filename):
     return 'post/images/p%s-%s.%s' % (instance.id, instance.author.username, filename.split('.')[1])
 
 
-class PostImage(models.Model):
+class Image(models.Model):
     id = models.AutoField(primary_key=True, unique=True, db_column='id')
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, db_column='owner')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, db_column='author')
     image = models.ImageField(max_length=255, upload_to=image_upload_location, db_column='image', null=True)
+    uploaded = models.DateTimeField(auto_now_add=True, db_column='uploaded')
+
+    def __str__(self):
+        if self.image:
+            return self.image.url[13:]
+        else:
+            return str(self.id)
     
     class Meta:
-        db_table = 'postimage'
+        db_table = 'image'
         managed = False
 
 
@@ -31,13 +38,14 @@ class Post(models.Model):
         related_name='post_receiver', verbose_name='post_receiver',
         on_delete=models.CASCADE,
         db_column='receiver',
-        null=True, blank=True
+        blank=True
     )
-    text = models.CharField(max_length=1000, blank=True, null=True, db_column='text')
+    text = models.TextField(blank=True, null=True, db_column='text')
     images = models.ManyToManyField(
-        to=PostImage,
+        to=Image,
         verbose_name='images',
-        db_column='images'
+        db_column='images',
+        through='PostImage'
     )
     created = models.DateTimeField(auto_now_add=True, db_column='created')
     modified = models.DateTimeField(auto_now=True, db_column='modified')
@@ -49,6 +57,17 @@ class Post(models.Model):
         db_table = 'post'
         managed = False
 
+class PostImage(models.Model):
+    id = models.AutoField(primary_key=True, unique=True, db_column='id')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, db_column='post_id')
+    image = models.ForeignKey(Image, on_delete=models.CASCADE, db_column='image_id')
+
+    def __str__(self):
+        return self.post.id + '-' + self.image.id
+    
+    class Meta:
+        db_table = 'post_images'
+        managed = False
 
 class Reaction(models.Model):
     id = models.AutoField(primary_key=True, unique=True, db_column='id')

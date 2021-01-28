@@ -6,6 +6,8 @@ from .views import *
 from tomo import settings
 
 urlpatterns = [
+    path('create/', create_post, name='create_post'),
+    path('create/<slug:post_id>/add_images', add_img, name='add_img'),
     path('<int:post_id>/', post_view, name='post_view'),
     path('<int:post_id>/like/', like_post, name='like'),
     path('<int:post_id>/unlike/', unlike_post, name='unlike'),

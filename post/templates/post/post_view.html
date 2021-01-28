@@ -12,37 +12,42 @@
             </span>
 
             <!--Post options-->
-            <span class="post-option col-md-1 pull-left dropdown" id="post-option">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                    <span class="caret"></span></button>
-                <ul class="dropdown-menu">
+            <!--<div class="post-option col-md-1 pull-center dropdown" id="post-option">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownPostOption" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Option
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownPostOption" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 38px, 0px); top: 0px; left: 0px; will-change: transform;">
                     {% if me == post.author %}
-                    <li><a href="#">Edit</a></li>
-                    <li><a href="{% url 'post:delete' post_id %}" onclick="return confirm('Are you sure?');">Delete</a>
-                    </li>
+                        <a class="dropdown-item" href="#">Edit</a>
+                        <a class="dropdown-item" href="{% url 'post:delete' post_id %}">Delete</a>
                     {% endif %}
-                    <li><a href="{% url 'post:post_view' post_id %}">View full post</a></li>
-                    <li><a onclick="copyLink();" id="link-to-copy" title="{% url 'post:post_view' post_id %}">Copy
-                            link</a></li>
-                </ul>
-                <script>
-                    function copyLink() {
-                        var link = document.getElementById("link-to-copy").title;
-                        link.focus();
-                        link.select();
-                        document.execCommand("copy", link);
-                    }
-                </script>
-            </span>
+                    <a class="dropdown-item" href="{% url 'post:post_view' post_id %}">View full post</a>
+                </div>
+            </div>-->
+            <div>
+                {% if me == post.author %}
+                    <a href="#">Edit</a>
+                    <a href="{% url 'post:delete' post_id %}">Delete</a>
+                {% endif %}
+                <a href="{% url 'post:post_view' post_id %}">View full post</a>
+            </div>
         </div>
 
         <!--Post create time-->
-        <div class="post-created-at">{{ post.created }}</div>
+        <div class="post-created-at pull-left">{{ post.created }}</div>
     </div>
 
     <div class="container">
         <!--Post text content-->
-        <div class="container-fluid post-text">{% if post.text %}<h5><strong>{{ post.text }}</strong></h5>{% endif %}
+        <div class="container-fluid post-text">{% if post.text %}<h5><strong>{{ post.text }}</strong></h5>{% endif %}</div>
+        <div class="container post-image">
+            {% if post.images %}
+                {% for image in post.images.all %}
+                    {% if image.image %}
+                        <img src="{{ image.image.url }}" width="200" height="200">
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
         </div>
 
         <div class="container-fluid post-reactions container" style="margin-bottom: 20px;">

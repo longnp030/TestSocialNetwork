@@ -42,7 +42,20 @@
                         Hi, <a href="{% url 'user:user_profile' user_id=request.user.id %}">{{ request.user }}</a>
                     </p>
 
-                    <div class="dropdown navbar-text">
+
+                    <ul>
+                        {% for personnal_chat in personnal_chats %}
+                            <li><a href="{% url 'chat:room' personnal_chat.receiver_id %}">{{ personnal_chat.chat }}</a></li>
+                        {% endfor %}
+                    </ul>
+                    <ul>
+                        {% for group_chat in group_chats %}
+                            <li><a href="{% url 'chat:group_room' group_chat.id %}">{{ group_chat }}</a></li>
+                        {% endfor %}
+                    </ul>
+                    
+
+                    <!--<div class="dropdown navbar-text">
                         <button class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">Messenger</button>
                         <ul class="dropdown-menu">                        
                             <li class="dropdown-submenu nav-item dropdown">
@@ -73,7 +86,7 @@
                               });
                             });
                         </script>
-                    </div>
+                    </div>-->
                 {% endif %}
             </div>
         </div>

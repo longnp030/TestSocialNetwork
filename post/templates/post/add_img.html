@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+<div>
+    {% if this_post_imgs %}
+        {% for img in this_post_imgs %}
+            {% if img.image %}
+                <img src="{{ img.image.url }}" id="img-{{ img.id }}" width="250" height="250">
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        You hasn't uploaded any images.
+    {% endif %}
+</div>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#uploadingModal">Add image</button>
+  
+  <!-- Modal -->
+<div class="modal fade" id="uploadingModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Choose image</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {% if upload_form %}
+                    <form method="POST" enctype='Multipart/form-data' id='upload-form'>
+                        {% csrf_token %}
+                        {{ upload_form }}
+                    </form>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" form="upload-form">Upload</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if add_form %}
+    <form method="POST" id="add-form">
+        {% csrf_token %}
+        {{ add_form }}
+        <div class="btn-comfirm">
+            <button type="submit" form="add-form">Save</button>
+        </div>
+    </form>
+{% endif %}
+{% endblock %}
