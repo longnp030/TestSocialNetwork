@@ -57,6 +57,22 @@ def add_img(request, post_id):
     }
     return render(request, 'post/add_img.html', context)
 
+def edit(request, post_id):
+    post = Post.objects.get(id=post_id)
+    if request.method == 'POST':
+        edit_post_form = PostEditForm(request.POST, instance=post)
+        if edit_post_form.is_valid():
+            edit_post_form.save()
+            return redirect(reverse('post:post_view', kwargs={'post_id': post_id}))
+    else:
+        edit_post_form = PostEditForm(instance=post)
+    context = {
+        'form': edit_post_form,
+        'personnal_chats': gac(request)['personnal_chats'],
+        'group_chats': gac(request)['group_chats'],
+    }
+    return render(request, 'post/edit.html', context)
+
 def like_post(request, post_id):
     if len(Reaction.objects.filter(post=Post.objects.get(id=post_id), liker=User.objects.get(id=request.user.id))) > 0:
         return redirect(reverse('post:post_view', kwargs={'post_id': post_id}))
@@ -100,6 +116,3 @@ def post_view(request, post_id):
 def delete(request, post_id):
     Post.objects.get(id=post_id).delete()
     return redirect('home')
-
-def edit(request, post_id):
-    pass

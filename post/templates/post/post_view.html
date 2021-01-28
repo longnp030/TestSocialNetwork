@@ -26,8 +26,8 @@
             </div>-->
             <div>
                 {% if me == post.author %}
-                    <a href="#">Edit</a>
-                    <a href="{% url 'post:delete' post_id %}">Delete</a>
+                    <a href="{% url 'post:edit' post_id %}">Edit</a>
+                    <a href="{% url 'post:delete' post_id %}" onclick="return confirm('are you sure?');">Delete</a>
                 {% endif %}
                 <a href="{% url 'post:post_view' post_id %}">View full post</a>
             </div>

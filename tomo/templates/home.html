@@ -4,17 +4,17 @@
 <div class="row">
     <div class="col-lg-12">
         {% if user.is_authenticated %}
-        <h3>Create new post!</h3>
+            <h3>Create new post!</h3>
             <a class="btn btn primary" href="{% url 'post:create_post' %}">Create new post</a>
-        <hr>
+            <hr>
 
-        <h3>Newsfeed</h3>
-        {% if posts %}
-            {% for post in posts %}
-                {% include 'post/post_view.html' with view=view post_id=post.post.id me=user post=post.post liked=post.liked reactions=post.reactions comments=post.comments %}
-            {% endfor %}
-        {% endif %}
-
+            <h3>Newsfeed</h3>
+            {% if posts %}
+                {% for post in posts %}
+                    {% include 'post/post_view.html' with view=view post_id=post.post.id me=user post=post.post liked=post.liked reactions=post.reactions comments=post.comments %}
+                {% endfor %}
+            {% endif %}
+            <hr>
         {% endif %}
     </div>
 </div>

@@ -21,3 +21,8 @@ class PostAddImageForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['images', ]
+
+class PostEditForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['receiver', 'text', 'images', ]
