@@ -1,4 +1,5 @@
 from post.models import Comment, Post, Reaction
+from notification.models import PostNotification
 import json
 import datetime as dt
 
@@ -52,9 +53,17 @@ class PostConsumer(AsyncWebsocketConsumer):
                 written=dt.datetime.now,
                 modified=dt.datetime.now
             )
-
             await database_sync_to_async(comment_obj.save)()
 
+            notification_obj = PostNotification(
+                actor=self.me,
+                action='commented on',
+                recipient=self.post.author,
+                post=self.post,
+                notified=dt.datetime.now,
+            )
+            await database_sync_to_async(notification_obj.save)()
+               
             # Send comment to room group
             # These are what will be sent to the post_comment function below
             await self.channel_layer.group_send(
@@ -64,6 +73,8 @@ class PostConsumer(AsyncWebsocketConsumer):
                     'comment': comment,
                     'commentor_id': comment_obj.commentor.id,
                     'commentor_name': comment_obj.commentor.username,
+                    'post_author_id': self.post.author.id,
+                    'notification': notification_obj.actor.username + " commented on your post at " + str(notification_obj.notified),
                     'target': 'comment',
                 }
             )
@@ -73,6 +84,15 @@ class PostConsumer(AsyncWebsocketConsumer):
                 reaction_obj = Reaction(post=self.post, liker=self.me)
                 await database_sync_to_async(reaction_obj.save)()
                 reaction_count = await self.get_reaction_count()
+
+                notification_obj = PostNotification(
+                    actor=reaction_obj.liker,
+                    action='liked',
+                    recipient=self.post.author,
+                    post=self.post,
+                    notified=dt.datetime.now,
+                )
+                await database_sync_to_async(notification_obj.save)()
 
                 # Send comment to room group
                 # These are what will be sent to the post_comment function below
@@ -84,6 +104,8 @@ class PostConsumer(AsyncWebsocketConsumer):
                         'liker_name': reaction_obj.liker.username,
                         'target': 'reaction',
                         'reaction_count': reaction_count,
+                        'post_author_id': self.post.author.id,
+                        'notification': notification_obj.actor.username + " liked your post on " + str(notification_obj.notified),
                         'reaction': reaction,
                     }
                 )
@@ -116,6 +138,8 @@ class PostConsumer(AsyncWebsocketConsumer):
         comment = event['comment']
         commentor_id = event['commentor_id']
         commentor_name = event['commentor_name']
+        post_author_id = event['post_author_id']
+        notification = event['notification']
         target = event['target']
 
         # Send comment to WebSocket
@@ -124,6 +148,8 @@ class PostConsumer(AsyncWebsocketConsumer):
             'comment': comment,
             'commentor_id': commentor_id,
             'commentor_name': commentor_name,
+            'post_author_id': post_author_id,
+            'notification': notification,
             'target': target,
         }))
 
@@ -134,6 +160,8 @@ class PostConsumer(AsyncWebsocketConsumer):
         if event['reaction'] == 'liked':
             liker_id = event['liker_id']
             liker_name = event['liker_name']
+            post_author_id = event['post_author_id']
+            notification = event['notification']
             reaction = event['reaction']
 
             # Send comment to WebSocket
@@ -142,6 +170,8 @@ class PostConsumer(AsyncWebsocketConsumer):
                 'liker_id': liker_id,
                 'liker_name': liker_name,
                 'reaction_count': reaction_count,
+                'post_author_id': post_author_id,
+                'notification': notification,
                 'target': target,
                 'reaction': reaction
             }))

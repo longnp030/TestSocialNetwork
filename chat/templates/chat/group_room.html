@@ -4,7 +4,11 @@
 {% block chat_option %}
     <div class="container chat-option" id="chat-option">
         <div class="container-fluid container p-5">
-            <a type="button" class="btn btn-primary" id="change-chat-name" data-toggle="modal" href="#" data-target="#change-chat-name-modal">Change chat name</a><br>
+            <a type="button" class="btn btn-primary" id="change-chat-name" data-toggle="modal" href="#" data-target="#change-chat-name-modal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen-fill" viewBox="0 0 16 16">
+                    <path d="M13.498.795l.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001z"/>
+                </svg>
+            </a><br>
             <div class="modal fade" id="change-chat-name-modal" tabindex="-1" role="dialog" aria-labelledby="change-chat-name-modal-header" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
@@ -29,7 +33,12 @@
             </div>
 
             {% if is_creator %}
-                <a type="button" class="btn btn-primary" data-toggle="modal" id="addmember" href="#" data-target="#add-member-modal">Add people to chat</a>
+                <a type="button" class="btn btn-primary" data-toggle="modal" id="addmember" href="#" data-target="#add-member-modal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-plus-fill" viewBox="0 0 16 16">
+                        <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                        <path fill-rule="evenodd" d="M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5z"/>
+                    </svg>
+                </a>
             {% endif %}
             <div class="modal fade" id="add-member-modal" tabindex="-1" role="dialog" aria-labelledby="add-member-modal-header" aria-hidden="true">
                 <div class="modal-dialog" role="document">
@@ -55,7 +64,11 @@
             </div>
             
             <div>
-                <a type="button" class="btn btn-primary" id="leave-group-chat" href="{% url 'chat:leave' group_chat_id %}" onclick="return confirm('Are you sure?');">Leave chat</a>
+                <a type="button" class="btn btn-primary" id="leave-group-chat" href="{% url 'chat:leave' group_chat_id %}" onclick="return confirm('Are you sure?');">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-door-open-fill" viewBox="0 0 16 16">
+                        <path d="M1.5 15a.5.5 0 0 0 0 1h13a.5.5 0 0 0 0-1H13V2.5A1.5 1.5 0 0 0 11.5 1H11V.5a.5.5 0 0 0-.57-.495l-7 1A.5.5 0 0 0 3 1.5V15H1.5zM11 2h.5a.5.5 0 0 1 .5.5V15h-1V2zm-2.5 8c-.276 0-.5-.448-.5-1s.224-1 .5-1 .5.448.5 1-.224 1-.5 1z"/>
+                    </svg>
+                </a>
                 <script>
                     chatSocket.onmessage = function(e) {
                         var data = JSON.parse(e.data);
@@ -81,7 +94,11 @@
                     <div class="dropdown member-option row">
                         <button class="glyphicon glyphicon-option-horizontal dropdown-toggle" type="button" id="chat-member-option" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
                         <div class="dropdown-menu row" aria-labelledby="chat-member-option">
-                            <a type="button" class="dropdown-item row" href="{% url 'chat:kick' group_chat_id member.id %}" id="kick-{{ member.id }}">Kick out</a>
+                            <a type="button" class="dropdown-item row" href="{% url 'chat:kick' group_chat_id member.id %}" id="kick-{{ member.id }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-x-fill" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm6.146-2.854a.5.5 0 0 1 .708 0L14 6.293l1.146-1.147a.5.5 0 0 1 .708.708L14.707 7l1.147 1.146a.5.5 0 0 1-.708.708L14 7.707l-1.146 1.147a.5.5 0 0 1-.708-.708L13.293 7l-1.147-1.146a.5.5 0 0 1 0-.708z"/>
+                                </svg>
+                            </a>
                             <a type="button" class="dropdown-item row" href="#">Comming-up</a>
                         </div>
                         <script>
@@ -161,8 +178,13 @@
 {% block main_content %}
     <h1><a id="group-chat-name"></a></h1>
     <textarea id="chat-log" cols="100" rows="20"></textarea><br>
-    <input id="chat-message-input" type="text" size="100"><br>
-    <input id="chat-message-submit" type="button" value="Send">
+    <input id="chat-message-input" type="text" size="90">
+    <button id="chat-message-submit" type="button" class="btn btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-reply-all-fill" viewBox="0 0 16 16">
+            <path d="M8.021 11.9L3.453 8.62a.719.719 0 0 1 0-1.238L8.021 4.1a.716.716 0 0 1 1.079.619V6c1.5 0 6 0 7 8-2.5-4.5-7-4-7-4v1.281c0 .56-.606.898-1.079.62z"/>
+            <path d="M5.232 4.293a.5.5 0 0 1-.106.7L1.114 7.945a.5.5 0 0 1-.042.028.147.147 0 0 0 0 .252.503.503 0 0 1 .042.028l4.012 2.954a.5.5 0 1 1-.593.805L.539 9.073a1.147 1.147 0 0 1 0-1.946l3.994-2.94a.5.5 0 0 1 .699.106z"/>
+        </svg>
+    </button>
 
     {{ group_chat_id|json_script:"group-chat-id" }}
     {{ request.user.id|json_script:"current-user-id" }}

@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 
-
 {% block main_content %}
 <div class="container col-md-12" style="margin-bottom: 20px;">
     <!--Post header-->
@@ -12,32 +11,51 @@
             </span>
 
             <!--Post options-->
-            <!--<div class="post-option col-md-1 pull-center dropdown" id="post-option">
-                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownPostOption" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Option
+            <div class="post-option col-md-1 pull-center dropdown" id="post-option">
+                <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownPostOption" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                        <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                    </svg>
                 </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownPostOption" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 38px, 0px); top: 0px; left: 0px; will-change: transform;">
+                <div class="dropdown-menu" aria-labelledby="dropdownPostOption">
                     {% if me == post.author %}
-                        <a class="dropdown-item" href="#">Edit</a>
-                        <a class="dropdown-item" href="{% url 'post:delete' post_id %}">Delete</a>
+                        <a class="dropdown-item row" href="#">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                            </svg>
+                        </a>
+                        <a class="dropdown-item row" href="{% url 'post:delete' post_id %}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                            </svg>
+                        </a>
                     {% endif %}
-                    <a class="dropdown-item" href="{% url 'post:post_view' post_id %}">View full post</a>
+                    <a class="dropdown-item row" href="{% url 'post:post_view' post_id %}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                            <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
+                            <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-arrow-up-right-square-fill" viewBox="0 0 16 16">
+                            <path d="M14 0a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12zM5.904 10.803L10 6.707v2.768a.5.5 0 0 0 1 0V5.5a.5.5 0 0 0-.5-.5H6.525a.5.5 0 1 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 .707.707z"/>
+                        </svg>
+                    </a>
                 </div>
-            </div>-->
-            <div>
+            </div>
+            <!-- Alternatives for bootstrap error <div>
                 {% if me == post.author %}
                     <a href="{% url 'post:edit' post_id %}">Edit</a>
                     <a href="{% url 'post:delete' post_id %}" onclick="return confirm('are you sure?');">Delete</a>
                 {% endif %}
                 <a href="{% url 'post:post_view' post_id %}">View full post</a>
-            </div>
+            </div>-->
         </div>
 
         <!--Post create time-->
         <div class="post-created-at pull-left">{{ post.created }}</div>
     </div>
 
-    <div class="container">
+    <div class="container post-content">
         <!--Post text content-->
         <div class="container-fluid post-text">{% if post.text %}<h5><strong>{{ post.text }}</strong></h5>{% endif %}</div>
         <div class="container post-image">
@@ -50,15 +68,9 @@
             {% endif %}
         </div>
 
-        <div class="container-fluid post-reactions container" style="margin-bottom: 20px;">
-            <!--Post reactions-->
-
-            <!--Clickable to see who liked-->
-            <span id="show-liked-box-{{ post.id }}" class="like-count col-md-1">
-                <!--Like count-->
-                <b class="post-like-count" id="like-count-{{ post.id }}">{{ reactions|length }}</b> liked
-            </span>
-            <span class="like-btn col-md-2" id="like-btn">
+        <!--Post reactions-->
+        <div class="container-fluid post-reactions container" style="margin-top: 20px; margin-bottom: 20px;">
+            <span class="like-btn col-md-1" id="like-btn">
                 <!--Check if current user liked or not-->
                 <p class="liked-or-not" hidden></p>
                 {% if liked %}
@@ -69,7 +81,11 @@
                 <!--If yes, button to unlike-->
                 <form action="{% url 'post:unlike' post.id %}" method="POST">
                     {% csrf_token %}
-                    <input type="submit" id="unlike-{{ post.id }}" class="btnunlike" value="Unlike">
+                    <button type="submit" class="btnunlike btn btn-dark" id="unlike-{{ post.id }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-hand-thumbs-down-fill" viewBox="0 0 16 16">
+                            <path d="M6.956 14.534c.065.936.952 1.659 1.908 1.42l.261-.065a1.378 1.378 0 0 0 1.012-.965c.22-.816.533-2.512.062-4.51.136.02.285.037.443.051.713.065 1.669.071 2.516-.211.518-.173.994-.68 1.2-1.272a1.896 1.896 0 0 0-.234-1.734c.058-.118.103-.242.138-.362.077-.27.113-.568.113-.856 0-.29-.036-.586-.113-.857a2.094 2.094 0 0 0-.16-.403c.169-.387.107-.82-.003-1.149a3.162 3.162 0 0 0-.488-.9c.054-.153.076-.313.076-.465a1.86 1.86 0 0 0-.253-.912C13.1.757 12.437.28 11.5.28H8c-.605 0-1.07.08-1.466.217a4.823 4.823 0 0 0-.97.485l-.048.029c-.504.308-.999.61-2.068.723C2.682 1.815 2 2.434 2 3.279v4c0 .851.685 1.433 1.357 1.616.849.232 1.574.787 2.132 1.41.56.626.914 1.28 1.039 1.638.199.575.356 1.54.428 2.591z"/>
+                        </svg>
+                    </button>
                 </form>
                 <!--<a class="unlikebtn" id="unlike-{{ post.id }}" href="#"">Unlike</a>-->
                 {% else %}
@@ -80,10 +96,19 @@
                 <!--Otherwise button to like-->
                 <form action="{% url 'post:like' post.id %}" method="POST">
                     {% csrf_token %}
-                    <input type="submit" class="btnlike" value="Like">
+                    <button type="submit" class="btnlike btn btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-hand-thumbs-up-fill" viewBox="0 0 16 16">
+                            <path d="M6.956 1.745C7.021.81 7.908.087 8.864.325l.261.066c.463.116.874.456 1.012.964.22.817.533 2.512.062 4.51a9.84 9.84 0 0 1 .443-.05c.713-.065 1.669-.072 2.516.21.518.173.994.68 1.2 1.273.184.532.16 1.162-.234 1.733.058.119.103.242.138.363.077.27.113.567.113.856 0 .289-.036.586-.113.856-.039.135-.09.273-.16.404.169.387.107.819-.003 1.148a3.162 3.162 0 0 1-.488.9c.054.153.076.313.076.465 0 .306-.089.626-.253.912C13.1 15.522 12.437 16 11.5 16H8c-.605 0-1.07-.081-1.466-.218a4.826 4.826 0 0 1-.97-.484l-.048-.03c-.504-.307-.999-.609-2.068-.722C2.682 14.464 2 13.846 2 13V9c0-.85.685-1.432 1.357-1.616.849-.231 1.574-.786 2.132-1.41.56-.626.914-1.279 1.039-1.638.199-.575.356-1.54.428-2.59z"/>
+                        </svg>
+                    </button>
                 </form>
                 <!--<a class="likebtn" id="like-{{ post.id }}" href="#"">Like</a>-->
                 {% endif %}
+            </span>
+            <!--Clickable to see who liked-->
+            <span id="show-liked-box-{{ post.id }}" class="like-count col-md-2">
+                <!--Like count-->
+                <b class="post-like-count" id="like-count-{{ post.id }}">{{ reactions|length }}</b> liked
             </span>
             <span id="show-comments-btn-{{ post.id }}" class="col-md-9 pull-center show-comments-btn">Comments</span>
 
@@ -96,8 +121,7 @@
                     </div>
                     {% for reaction in reactions %}
                     <div class="box-main row mt-50" id="postliker-{{ post.id }}">
-                        <span class="col-md-8"><a href="{% url 'user:user_profile' reaction.liker.id %}">{{
-                                reaction.liker }}</a></span>
+                        <span class="col-md-8"><a href="{% url 'user:user_profile' reaction.liker.id %}">{{ reaction.liker }}</a></span>
                     </div>
                     {% endfor %}
                 </div>
@@ -121,7 +145,6 @@
                 }
             </script>
         </div>
-
 
         <!--Post comments-->
         <div id="comments-box-{{ post.id }}" class="container-fluid comments-box">
@@ -174,6 +197,9 @@
                     }
                 }
 
+                const notification_tray = document.getElementById('notification-tray');
+                console.log(notification_tray)
+
                 const postSocket = new WebSocket(
                     'ws://'
                     + window.location.host
@@ -202,6 +228,14 @@
                     a_comment.appendChild(comment_content);
 
                     comments_box.insertBefore(a_comment, document.getElementById("blank"));
+
+                    if ("{{ me.id }}" !== data.commentor_id.toString()) {
+                        notification_item = document.createElement("a");
+                        notification_item.className = "dropdown-item row notification-item";
+                        notification_item.href = "/post/" + postId;
+                        notification_item.textContent = data.notification;
+                        notification_tray.prepend(notification_item);
+                    }
                     /*} else if (data.target === "reaction" && data.reaction === "liked") {
                         liker = document.createElement("a");
                         liker.href = "/user/" + data.liker_id;

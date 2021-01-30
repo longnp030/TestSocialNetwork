@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'user',
     'post',
     'chat',
+    'notification',
     'channels',
     'django.contrib.admin',
     'django.contrib.auth',

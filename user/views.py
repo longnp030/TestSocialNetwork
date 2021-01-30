@@ -4,8 +4,10 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.db.models import Q
+from django.template import Context, Template
 import datetime as dt
 
+from notification.models import *
 from chat.views import get_available_chats as gac
 from .models import *
 from .forms import *

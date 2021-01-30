@@ -1,5 +1,6 @@
 from chat.models import *
 from django.db.models.query_utils import Q
+from notification.models import *
 from user.models import *
 from post.models import *
 from post.forms import *
@@ -26,6 +27,7 @@ def home(request):
             'receiver_id': chat.user2.id if chat.user1 == me else chat.user1.id,
         } for chat in personnal_chats],
         'group_chats': group_chats,
+        'my_notifications': reversed(PostNotification.objects.filter(recipient=me).exclude(actor=me)),
         'view': 'home',
     }
     return render(request, 'home.html', context)
