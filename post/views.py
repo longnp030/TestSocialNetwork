@@ -1,6 +1,7 @@
 from post.forms import *
 from user.models import *
 from post.models import *
+from notification.models import *
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
@@ -88,6 +89,11 @@ def unlike_post(request, post_id):
             post=Post.objects.get(id=post_id),
             liker=User.objects.get(id=request.user.id)
         ).delete()
+        PostNotification.objects.get(
+            post=Post.objects.get(id=post_id),
+            actor=User.objects.get(id=request.user.id),
+            action='liked'
+        ).delete()
     except Exception as e:
         return redirect(reverse('post:post_view', kwargs={'post_id': post_id}))
     else:
@@ -110,6 +116,7 @@ def post_view(request, post_id):
         'view': 'post',
         'personnal_chats': gac(request)['personnal_chats'],
         'group_chats': gac(request)['group_chats'],
+        'my_notifications': list(reversed(PostNotification.objects.filter(recipient=me).exclude(actor=me))),
     }
     return render(request, 'post/post_view.html', context)
 

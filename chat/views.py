@@ -4,6 +4,7 @@ from chat.models import ChatBox, GroupChatBox, GroupMessage, JoinGroupChat, Mess
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
+from notification.models import *
 from user.models import *
 from .forms import *
 
@@ -94,13 +95,13 @@ def group_room(request, group_chat_id):
         groupchataddmemberform = GroupChatAddMemberForm(initial={'inviter': me, 'groupchatbox':groupchatbox})
 
     if request.method == 'POST':
-        changechatnameform = ChangeChatNameForm(request.POST, instance=GroupChatBox.objects.get(id=group_chat_id))
+        changechatnameform = ChangeChatNameForm(request.POST, instance=groupchatbox)
         if changechatnameform.is_valid():
             changechatnameform.save()
             return redirect(reverse('chat:group_room', kwargs={'group_chat_id': group_chat_id}))
         return redirect(reverse('chat:group_room', kwargs={'group_chat_id': group_chat_id}))
     else:
-        changechatnameform = ChangeChatNameForm(instance=GroupChatBox.objects.get(id=group_chat_id))
+        changechatnameform = ChangeChatNameForm(instance=groupchatbox)
         
     contextDict = {
         'me_id': me.id,
@@ -112,21 +113,22 @@ def group_room(request, group_chat_id):
             'groupmessage_sender_name': groupmessage.sender.username,
             #'message_sender_avatar': None if message.sender.avatar is None else message.sender.avatar.url,
             'groupmessage_content': groupmessage.content,
-            'groupmessage_sent': str(groupmessage.sent),
+            'groupmessage_sent': str(groupmessage.sent)[:-6],
         } for groupmessage in groupmessages]),
     }
     context = {
         'personnal_chats': get_available_chats(request)['personnal_chats'],
         'group_chats': get_available_chats(request)['group_chats'],
+        'my_notifications': list(reversed(PostNotification.objects.filter(recipient=me).exclude(actor=me))),
         'groupchataddmemberform': groupchataddmemberform,
         'changechatnameform': changechatnameform,
         'me': me,
         'groupchatbox': groupchatbox,
         'group_chat_id': group_chat_id,
         'group_chat_name': groupchatbox.name,
-        'groupchat_member': [GroupChatBox.objects.get(id=group_chat_id).creator] + [join.invitee for join in JoinGroupChat.objects.filter(groupchatbox=GroupChatBox.objects.get(id=group_chat_id))],
-        'groupchatbox_creator': GroupChatBox.objects.get(id=group_chat_id).creator,
-        'is_creator': me == GroupChatBox.objects.get(id=group_chat_id).creator,
+        'groupchat_member': [groupchatbox.creator] + [join.invitee for join in JoinGroupChat.objects.filter(groupchatbox=groupchatbox)],
+        'groupchatbox_creator': groupchatbox.creator,
+        'is_creator': me == groupchatbox.creator,
         'data': json.dumps(contextDict)
     }
     return render(request, 'chat/group_room.html', context)
@@ -183,5 +185,8 @@ def kick(request, group_chat_id, member_id):
     return redirect(reverse('chat:group_room', kwargs={'group_chat_id': group_chat_id}))
 
 def leave(request, group_chat_id):
-    JoinGroupChat.objects.get(groupchatbox=GroupChatBox.objects.get(id=group_chat_id), invitee=User.objects.get(id=request.user.id)).delete()
+    try:
+        JoinGroupChat.objects.get(groupchatbox=GroupChatBox.objects.get(id=group_chat_id), invitee=User.objects.get(id=request.user.id)).delete()
+    except:
+        pass
     return redirect(reverse('chat:group_room', kwargs={'group_chat_id': group_chat_id}))

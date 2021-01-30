@@ -124,6 +124,7 @@ class JoinGroupChat(models.Model):
         verbose_name='inivitee',
         db_column='invitee',
     )
+    joined = models.DateTimeField(auto_now_add=True, db_column='joined')
 
     def __str__(self):
         return self.inviter.username + '-' + self.invitee.username

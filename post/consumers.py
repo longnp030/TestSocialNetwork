@@ -83,7 +83,7 @@ class PostConsumer(AsyncWebsocketConsumer):
             if reaction == "liked":
                 reaction_obj = Reaction(post=self.post, liker=self.me)
                 await database_sync_to_async(reaction_obj.save)()
-                reaction_count = await self.get_reaction_count()
+                '''reaction_count = await self.get_reaction_count()'''
 
                 notification_obj = PostNotification(
                     actor=reaction_obj.liker,
@@ -103,7 +103,7 @@ class PostConsumer(AsyncWebsocketConsumer):
                         'liker_id': reaction_obj.liker.id,
                         'liker_name': reaction_obj.liker.username,
                         'target': 'reaction',
-                        'reaction_count': reaction_count,
+                        #'reaction_count': reaction_count,
                         'post_author_id': self.post.author.id,
                         'notification': notification_obj.actor.username + " liked your post on " + str(notification_obj.notified),
                         'reaction': reaction,
@@ -111,9 +111,17 @@ class PostConsumer(AsyncWebsocketConsumer):
                 )
             else:
                 reaction_obj = await database_sync_to_async(Reaction.objects.get)(post=self.post, liker=self.me)
+                '''reaction_count = await self.get_reaction_count()
+                print(reaction_count)'''
+
+                notification_obj = await database_sync_to_async(PostNotification.objects.get)(
+                    actor=reaction_obj.liker,
+                    action='liked',
+                    post=reaction_obj.post,
+                )
+
                 await database_sync_to_async(reaction_obj.delete)()
-                reaction_count = await self.get_reaction_count()
-                print(reaction_count)
+                await database_sync_to_async(notification_obj.delete)()
 
                 # Send comment to room group
                 # These are what will be sent to the post_comment function below
@@ -124,7 +132,7 @@ class PostConsumer(AsyncWebsocketConsumer):
                         'unliker_id': self.me.id,
                         'unliker_name': self.me.username,
                         'target': 'reaction',
-                        'reaction_count': reaction_count,
+                        #'reaction_count': reaction_count,
                         'reaction': reaction,
                     }
                 )
@@ -156,7 +164,7 @@ class PostConsumer(AsyncWebsocketConsumer):
     # Receive comment from room group
     async def post_reaction(self, event):
         target = event['target']
-        reaction_count = event['reaction_count']
+        #reaction_count = event['reaction_count']
         if event['reaction'] == 'liked':
             liker_id = event['liker_id']
             liker_name = event['liker_name']
@@ -169,7 +177,7 @@ class PostConsumer(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps({
                 'liker_id': liker_id,
                 'liker_name': liker_name,
-                'reaction_count': reaction_count,
+                #'reaction_count': reaction_count,
                 'post_author_id': post_author_id,
                 'notification': notification,
                 'target': target,
@@ -185,7 +193,7 @@ class PostConsumer(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps({
                 'unliker_id': unliker_id,
                 'unliker_name': unliker_name,
-                'reaction_count': reaction_count,
+                #'reaction_count': reaction_count,
                 'target': target,
                 'reaction': reaction
             }))

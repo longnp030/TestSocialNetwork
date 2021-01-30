@@ -6,37 +6,37 @@
     <div class="container post-header">
         <div class="author-option container row col-md-12">
             <!---Post author-->
-            <span class="author col-md-1 pull-left row row-no-gutters">
+            <span class="author col-md-3 pull-left row row-no-gutters">
                 <h5><a href="{% url 'user:user_profile' post.author.id %}">{{ post.author }}</a></h5>
             </span>
 
             <!--Post options-->
-            <div class="post-option col-md-1 pull-center dropdown" id="post-option">
+            <div class="post-option col-md-2 pull-left dropdown" id="post-option">
                 <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownPostOption" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
                         <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
                     </svg>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownPostOption">
                     {% if me == post.author %}
-                        <a class="dropdown-item row" href="#">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                        <a class="dropdown-item row" href="{% url 'post:edit' post_id %}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                                 <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                                 <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
                             </svg>
                         </a>
                         <a class="dropdown-item row" href="{% url 'post:delete' post_id %}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
                                 <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
                             </svg>
                         </a>
                     {% endif %}
                     <a class="dropdown-item row" href="{% url 'post:post_view' post_id %}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
                             <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
                             <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
                         </svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-arrow-up-right-square-fill" viewBox="0 0 16 16">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-arrow-up-right-square-fill" viewBox="0 0 16 16">
                             <path d="M14 0a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12zM5.904 10.803L10 6.707v2.768a.5.5 0 0 0 1 0V5.5a.5.5 0 0 0-.5-.5H6.525a.5.5 0 1 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 .707.707z"/>
                         </svg>
                     </a>
@@ -62,7 +62,7 @@
             {% if post.images %}
                 {% for image in post.images.all %}
                     {% if image.image %}
-                        <img src="{{ image.image.url }}" width="200" height="200">
+                        <img src="{{ image.image.url }}" width="300" height="300">
                     {% endif %}
                 {% endfor %}
             {% endif %}
@@ -72,43 +72,47 @@
         <div class="container-fluid post-reactions container" style="margin-top: 20px; margin-bottom: 20px;">
             <span class="like-btn col-md-1" id="like-btn">
                 <!--Check if current user liked or not-->
-                <p class="liked-or-not" hidden></p>
+                    <p class="liked-or-not" hidden></p>
                 {% if liked %}
-                <!--<script>
-                        var liked_or_not = document.getElementsByClassName("liked-or-not")[0];
-                        liked_or_not.textContent = "liked";
-                    </script>-->
-                <!--If yes, button to unlike-->
-                <form action="{% url 'post:unlike' post.id %}" method="POST">
-                    {% csrf_token %}
-                    <button type="submit" class="btnunlike btn btn-dark" id="unlike-{{ post.id }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-hand-thumbs-down-fill" viewBox="0 0 16 16">
-                            <path d="M6.956 14.534c.065.936.952 1.659 1.908 1.42l.261-.065a1.378 1.378 0 0 0 1.012-.965c.22-.816.533-2.512.062-4.51.136.02.285.037.443.051.713.065 1.669.071 2.516-.211.518-.173.994-.68 1.2-1.272a1.896 1.896 0 0 0-.234-1.734c.058-.118.103-.242.138-.362.077-.27.113-.568.113-.856 0-.29-.036-.586-.113-.857a2.094 2.094 0 0 0-.16-.403c.169-.387.107-.82-.003-1.149a3.162 3.162 0 0 0-.488-.9c.054-.153.076-.313.076-.465a1.86 1.86 0 0 0-.253-.912C13.1.757 12.437.28 11.5.28H8c-.605 0-1.07.08-1.466.217a4.823 4.823 0 0 0-.97.485l-.048.029c-.504.308-.999.61-2.068.723C2.682 1.815 2 2.434 2 3.279v4c0 .851.685 1.433 1.357 1.616.849.232 1.574.787 2.132 1.41.56.626.914 1.28 1.039 1.638.199.575.356 1.54.428 2.591z"/>
-                        </svg>
-                    </button>
-                </form>
-                <!--<a class="unlikebtn" id="unlike-{{ post.id }}" href="#"">Unlike</a>-->
+                    <!--<script>
+                            var liked_or_not = document.getElementsByClassName("liked-or-not")[0];
+                            liked_or_not.textContent = "liked";
+                        </script>-->
+                    <!--If yes, button to unlike-->
+                    <form action="{% url 'post:unlike' post.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btnunlike btn btn-dark" id="unlike-{{ post.id }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-hand-thumbs-down-fill" viewBox="0 0 16 16">
+                                <path d="M6.956 14.534c.065.936.952 1.659 1.908 1.42l.261-.065a1.378 1.378 0 0 0 1.012-.965c.22-.816.533-2.512.062-4.51.136.02.285.037.443.051.713.065 1.669.071 2.516-.211.518-.173.994-.68 1.2-1.272a1.896 1.896 0 0 0-.234-1.734c.058-.118.103-.242.138-.362.077-.27.113-.568.113-.856 0-.29-.036-.586-.113-.857a2.094 2.094 0 0 0-.16-.403c.169-.387.107-.82-.003-1.149a3.162 3.162 0 0 0-.488-.9c.054-.153.076-.313.076-.465a1.86 1.86 0 0 0-.253-.912C13.1.757 12.437.28 11.5.28H8c-.605 0-1.07.08-1.466.217a4.823 4.823 0 0 0-.97.485l-.048.029c-.504.308-.999.61-2.068.723C2.682 1.815 2 2.434 2 3.279v4c0 .851.685 1.433 1.357 1.616.849.232 1.574.787 2.132 1.41.56.626.914 1.28 1.039 1.638.199.575.356 1.54.428 2.591z"/>
+                            </svg>
+                        </button>
+                    </form>
+                    <!--<a class="unlikebtn" id="unlike-{{ post.id }}" href="#"">Unlike</a>-->
                 {% else %}
-                <!--<script>
-                        var liked_or_not = document.getElementsByClassName("liked-or-not")[0];
-                        liked_or_not.textContent = "unliked";
-                    </script>-->
-                <!--Otherwise button to like-->
-                <form action="{% url 'post:like' post.id %}" method="POST">
-                    {% csrf_token %}
-                    <button type="submit" class="btnlike btn btn-primary">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-hand-thumbs-up-fill" viewBox="0 0 16 16">
-                            <path d="M6.956 1.745C7.021.81 7.908.087 8.864.325l.261.066c.463.116.874.456 1.012.964.22.817.533 2.512.062 4.51a9.84 9.84 0 0 1 .443-.05c.713-.065 1.669-.072 2.516.21.518.173.994.68 1.2 1.273.184.532.16 1.162-.234 1.733.058.119.103.242.138.363.077.27.113.567.113.856 0 .289-.036.586-.113.856-.039.135-.09.273-.16.404.169.387.107.819-.003 1.148a3.162 3.162 0 0 1-.488.9c.054.153.076.313.076.465 0 .306-.089.626-.253.912C13.1 15.522 12.437 16 11.5 16H8c-.605 0-1.07-.081-1.466-.218a4.826 4.826 0 0 1-.97-.484l-.048-.03c-.504-.307-.999-.609-2.068-.722C2.682 14.464 2 13.846 2 13V9c0-.85.685-1.432 1.357-1.616.849-.231 1.574-.786 2.132-1.41.56-.626.914-1.279 1.039-1.638.199-.575.356-1.54.428-2.59z"/>
-                        </svg>
-                    </button>
-                </form>
-                <!--<a class="likebtn" id="like-{{ post.id }}" href="#"">Like</a>-->
+                    <!--<script>
+                            var liked_or_not = document.getElementsByClassName("liked-or-not")[0];
+                            liked_or_not.textContent = "unliked";
+                        </script>-->
+                    <!--Otherwise button to like-->
+                    <form action="{% url 'post:like' post.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btnlike btn btn-primary" id="like-{{ post.id }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-hand-thumbs-up-fill" viewBox="0 0 16 16">
+                                <path d="M6.956 1.745C7.021.81 7.908.087 8.864.325l.261.066c.463.116.874.456 1.012.964.22.817.533 2.512.062 4.51a9.84 9.84 0 0 1 .443-.05c.713-.065 1.669-.072 2.516.21.518.173.994.68 1.2 1.273.184.532.16 1.162-.234 1.733.058.119.103.242.138.363.077.27.113.567.113.856 0 .289-.036.586-.113.856-.039.135-.09.273-.16.404.169.387.107.819-.003 1.148a3.162 3.162 0 0 1-.488.9c.054.153.076.313.076.465 0 .306-.089.626-.253.912C13.1 15.522 12.437 16 11.5 16H8c-.605 0-1.07-.081-1.466-.218a4.826 4.826 0 0 1-.97-.484l-.048-.03c-.504-.307-.999-.609-2.068-.722C2.682 14.464 2 13.846 2 13V9c0-.85.685-1.432 1.357-1.616.849-.231 1.574-.786 2.132-1.41.56-.626.914-1.279 1.039-1.638.199-.575.356-1.54.428-2.59z"/>
+                            </svg>
+                        </button>
+                    </form>
+                    <!--<a class="likebtn" id="like-{{ post.id }}" href="#"">Like</a>-->
                 {% endif %}
             </span>
             <!--Clickable to see who liked-->
             <span id="show-liked-box-{{ post.id }}" class="like-count col-md-2">
                 <!--Like count-->
                 <b class="post-like-count" id="like-count-{{ post.id }}">{{ reactions|length }}</b> liked
+            </span>
+            <span id="show-pop-up-comment-{{ post.id }}" class="comment-count col-md-2">
+                <!--Comment count-->
+                <b class="post-comment-count" id="comment-count-{{ post.id }}">{{ comments|length }}</b> comments
             </span>
             <span id="show-comments-btn-{{ post.id }}" class="col-md-9 pull-center show-comments-btn">Comments</span>
 
@@ -128,21 +132,21 @@
             </div>
 
             <script>
-                var modal = document.getElementById("liked-box-0".replace("0", "{{ post.id }}"));
-                var btn = document.getElementById("show-liked-box-0".replace("0", "{{ post.id }}"));
-                var span = document.getElementsByClassName("close")[0];
+                var like_modal = document.getElementById("liked-box-0".replace("0", "{{ post.id }}"));
+                var like_box_btn = document.getElementById("show-liked-box-0".replace("0", "{{ post.id }}"));
+                var like_span = document.getElementsByClassName("close")[0];
 
-                btn.onclick = function () {
-                    modal.style.display = "block";
+                like_box_btn.onclick = function () {
+                    like_modal.style.display = "block";
                 }
-                span.onclick = function () {
-                    modal.style.display = "none";
+                like_span.onclick = function () {
+                    like_modal.style.display = "none";
                 }
                 window.onclick = function (event) {
-                    if (event.target == modal) {
-                        modal.style.display = "none";
+                    if (event.target == like_modal) {
+                        like_modal.style.display = "none";
                     }
-                }
+                } 
             </script>
         </div>
 
@@ -156,14 +160,14 @@
             </div>
             
             {% if comments %}
-            {% for comment in comments %}
-            <div class="a-comment row" style="margin-bottom: 10px;">
-                <span class="comment-author col-md-1">
-                    <a href="{% url 'user:user_profile' comment.commentor.id %}">{{ comment.commentor }}</a>
-                </span>
-                <span class="comment-content col-md-11 pull-center">{{ comment.content }}</span>
-            </div>
-            {% endfor %}
+                {% for comment in comments %}
+                    <div class="a-comment row" style="margin-bottom: 10px;">
+                        <span class="comment-author col-md-1">
+                            <a href="{% url 'user:user_profile' comment.commentor.id %}">{{ comment.commentor }}</a>
+                        </span>
+                        <span class="comment-content col-md-11 pull-center">{{ comment.content }}</span>
+                    </div>
+                {% endfor %}
             {% endif %}
 
             <script id="post-id-{{ post_id }}">"{{ post_id }}"</script>
@@ -229,39 +233,18 @@
 
                     comments_box.insertBefore(a_comment, document.getElementById("blank"));
 
-                    if ("{{ me.id }}" !== data.commentor_id.toString()) {
+                    if (("{{ me.id }}" !== data.commentor_id.toString())||("{{ me.id }}" !== data.liker_id.toString())) {
+                        notification_ctn = document.createElement("li");
                         notification_item = document.createElement("a");
-                        notification_item.className = "dropdown-item row notification-item";
+                        notification_item.className = "dropdown-item row";
                         notification_item.href = "/post/" + postId;
                         notification_item.textContent = data.notification;
-                        notification_tray.prepend(notification_item);
+                        notification_ctn.appendChild(notification_item);
+                        notification_tray.prepend(notification_ctn);
                     }
-                    /*} else if (data.target === "reaction" && data.reaction === "liked") {
-                        liker = document.createElement("a");
-                        liker.href = "/user/" + data.liker_id;
-                        liker.textContent = data.liker_name;
-                        liker_ctn = document.getElementById("postliker-0".replace("0", postId));
-                        liker_ctn.appendChild(liker);
-
-                        like_count = document.getElementById("like-count-0".replace("0", postId));
-                        like_count.textContent = data.reaction_count;
-                    } else {
-                        liker = document.querySelectorAll("a[href='/user/0/']".replace("0", data.unliker_id));
-                        liker.forEach(element => {
-                            e => e.parentNode.removeChild(e);
-                        });
-
-                        like_count = document.getElementById("like-count-0".replace("0", postId));
-                        like_count.textContent = data.reaction_count;
-                    }*/
                 };
                 postSocket.onclose = function (e) {
                     console.error('Comment socket closed unexpectedly');
-
-                    //postSocket = null;
-                    /*setTimeout(function () {
-                        connect();
-                    }, 2000);*/
                 };
 
                 document.querySelector('#comment-input-0'.replace("0", postId)).focus();
@@ -280,45 +263,17 @@
                     commentInputDom.value = '';
                 };
 
-                /* Post Reaction JS Section */
-                /*var likeCount = document.getElementById("like-count-0".replace("0", postId));
-                var liked = (document.getElementsByClassName("liked-or-not")[0].textContent === "liked");
-                console.log(liked);
-                var me_liked = document.querySelectorAll("a[href='/user/0/']".replace("0", "{{ me.id }}"));
-                        
-                if (liked) {
-                    var unlikebtn = document.querySelector("#unlike-0".replace("0", postId));
-                    unlikebtn.onclick = function(e) {
-                        postSocket.send(JSON.stringify({
-                            'reaction': "unliked"
-                        }));
-                        unlikebtn.textContent = "Like";
-                        unlikebtn.id = "like-0".replace("0", postId);
-                        unlikebtn.className = "likebtn";
-                        document.getElementsByClassName("liked-or-not")[0].textContent = "unliked";
+                document.querySelector("#like-0".replace("0", postId)).onclick = function(e) {
+                    postSocket.send(JSON.stringify({
+                        'reaction': "liked"
+                    }));
+                };
 
-                        //postSocket = null;
-                        setTimeout(function () {
-                            connect();
-                        }, 1000);
-                    }
-                } else {
-                    var likebtn = document.querySelector("#like-0".replace("0", postId))
-                    likebtn.onclick = function(e) {
-                        postSocket.send(JSON.stringify({
-                            'reaction': "liked"
-                        }));
-                        likebtn.textContent = "Unlike";
-                        likebtn.id = "unlike-0".replace("0", postId);
-                        likebtn.className = "unlikebtn";
-                        document.getElementsByClassName("liked-or-not")[0].textContent = "liked";
-                        
-                        //postSocket = null;
-                        setTimeout(function () {
-                            connect();
-                        }, 1000);
-                    }
-                };*/
+                document.querySelector("#unlike-0".replace("0", postId)).onclick = function(e) {
+                    postSocket.send(JSON.stringify({
+                        'reaction': "unliked"
+                    }));
+                };
             }
             connect();
         </script>

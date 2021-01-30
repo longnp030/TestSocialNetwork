@@ -155,7 +155,18 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
             leave_member_id = None
         if leave_member_id:
             member = await database_sync_to_async(User.objects.get)(id=int(leave_member_id))
-            message = member.username + " leaved this chat."
+            if member == self.chatbox.creator:
+                second_joined_member = await database_sync_to_async(JoinGroupChat.objects.order_by)('joined')
+                second_joined_member = second_joined_member[0].invitee
+                self.chatbox.creator = second_joined_member
+                await database_sync_to_async(self.chatbox.save)()
+                message = member.username + " left this chat. Admin right is transferred to " + self.chatbox.creator.username
+
+                await database_sync_to_async(JoinGroupChat.objects.get(invitee=self.chatbox.creator).delete)()
+                for join in await database_sync_to_async(JoinGroupChat.objects.all)():
+                    join.inviter = self.chatbox.creator
+            else:
+                message = member.username + " left this chat."
 
             print(message)
             message_obj = GroupMessage(
@@ -208,7 +219,7 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
                 'type': 'chat_message',
                 'message': message,
                 'sender': message_obj.sender.username,
-                'sent_at': str(message_obj.sent),
+                'sent_at': str(message_obj.sent)[:-6],
                 'groupchatbox': message_obj.chatbox.name,
                 'new_chat_name': new_chat_name,
                 'kick_member_id': kick_member_id,

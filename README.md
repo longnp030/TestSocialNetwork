@@ -15,10 +15,12 @@ To run:
             2.1.1. Modify `'name', 'user', 'password`' depending on your local mysql.
         2.2. Find variables named `EMAIL_HOST_USER, EMAIL_HOST_PASSWORD`
             2.2.1. Change it to your preferred email and password.
-    3. Run server
+    3. Run server:
         Run the following commands:
 
         `conda activate [your_path_to_anaconda_libs]` (*optional*, if you use anaconda to manage your libraries)
-        `env\scripts\activate` (enter virtual environment)
+        `env\scripts\activate` (enter virtual environment)\
 
-&nbsp;&nbsp;&nbsp;`python manage.py runserver`
+```
+     py manage.py runserver
+```
